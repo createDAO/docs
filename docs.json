@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "CreateDAO Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#6293ff",
+    "light": "#6293ff",
+    "dark": "#6293ff"
   },
   "favicon": "/favicon.png",
   "navigation": {
@@ -78,9 +78,12 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
+      "website": "https://createdao.org/",
+      "x": "https://x.com/createdao",
       "github": "https://github.com/createdao",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "telegram": "https://t.me/createdao_org",
+      "discord": "https://discord.gg/HnRmtP2fph"
+
     }
   }
 }
