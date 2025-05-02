@@ -1,71 +1,49 @@
 ---
-title: Introduction
-description: "Welcome to the home of your new documentation"
+title: 'Introduction'
+description: 'Welcome to the CreateDAO documentation.'
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.png"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.png"
-  alt="Hero Dark"
-/>
+## What is CreateDAO?
 
-## Setting up
+CreateDAO is an open-source platform designed to simplify the creation and deployment of Decentralized Autonomous Organizations (DAOs) across multiple blockchain networks. It provides a standardized, secure, and upgradeable set of smart contracts based on industry best practices, coupled with user-friendly interfaces to make DAO creation accessible to everyone, regardless of their technical expertise.
 
-The first step to world-class documentation is setting up your editing environments.
+The core of CreateDAO is a factory contract system that allows users to deploy a suite of essential DAO components, including:
+*   A Governance Token (ERC20-based)
+*   A Staking Contract for voting power
+*   A Treasury Contract to manage funds
+*   The main DAO contract orchestrating governance (proposals and execution)
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
+Optional modules, like Presale contracts, can be added later through the DAO's own governance process.
 
-## Make it yours
+## Vision and Goals
 
-Update your docs to your brand and add valuable content for the best user conversion.
+Our vision is to empower communities and organizations to self-govern effectively and transparently using blockchain technology. We aim to lower the barrier to entry for DAO creation by providing:
 
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
-</CardGroup>
+*   **Simplicity:** An intuitive process for launching a fully functional DAO.
+*   **Security:** Audited and battle-tested smart contract patterns.
+*   **Flexibility:** Support for multiple blockchains and upgradeable contracts.
+*   **Accessibility:** Open-source code and free-to-use tools.
+*   **Interoperability:** Standardized contracts that can integrate with other platforms (like DAO management tools).
+
+Our goal is to become the go-to foundational layer for DAO creation, fostering innovation and decentralization across the web3 ecosystem.
+
+## Key Features
+
+*   **Multi-Chain Deployment:** Launch your DAO on various supported EVM-compatible blockchains.
+*   **Standardized & Upgradeable Contracts:** Utilizes the UUPS proxy pattern for seamless upgrades via DAO governance.
+*   **Core Modules Included:** Token, Staking, Treasury, and Governance logic deployed together.
+*   **Optional Modules:** Extend DAO functionality (e.g., Presale) through proposals.
+*   **Gas Efficient:** Optimized contracts to minimize deployment and interaction costs.
+*   **Open Source:** All code is publicly available under a Business Source License (BUSL-1.1), transitioning to a more permissive license over time.
+*   **User Interface:** A web application (CreateDAO.org) provides a guided experience for DAO creation.
+
+## Who is this Documentation For?
+
+This documentation is intended for a wide audience, including:
+
+*   **Community Leaders & Founders:** Individuals looking to launch a DAO for their project or community.
+*   **Developers:** Those who want to understand the underlying smart contracts, integrate with CreateDAO, or build applications on top of it (like DAO management platforms).
+*   **DAO Members:** Participants who want to learn how their CreateDAO-based organization functions, including governance processes.
+*   **Anyone interested in DAOs:** Individuals curious about DAO architecture and the CreateDAO implementation.
+
+Whether you're deploying your first DAO or are an experienced developer, these docs aim to provide the information you need.

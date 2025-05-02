@@ -1,0 +1,33 @@
+---
+title: 'Interfaces'
+description: 'Overview of the Solidity interfaces used in CreateDAO.'
+---
+
+Source: [`contracts/core/interfaces/`](https://github.com/createdao/createdao-contracts/tree/main/contracts/core/interfaces) *(Note: Update link if necessary)*
+
+Solidity interfaces define a contract's public functions without implementing them. They are crucial for enabling interaction between different smart contracts in a decoupled way. CreateDAO uses interfaces extensively to define the expected functions for its core components and modules.
+
+## Purpose of Interfaces in CreateDAO
+
+*   **Decoupling:** Contracts like `DAOFactory` or `DAO` interact with modules (Token, Treasury, Staking, Presale) through their interfaces (`IDAOToken`, `IDAOTreasury`, etc.). This means the `DAO` contract doesn't need to know the exact implementation details of the Treasury, only that it conforms to the `IDAOTreasury` interface. This makes the system more modular and easier to upgrade or modify.
+*   **Type Checking:** Solidity uses interfaces for type checking. When the `DAO` contract stores the address of the treasury proxy, it can cast it to the `IDAOTreasury` type to ensure it can call the expected treasury functions.
+*   **Clarity:** Interfaces clearly define the public API (Application Programming Interface) of each contract component.
+
+## Key Interfaces
+
+*(This list is based on the directory structure provided earlier and may need refinement)*
+
+*   **`IDAOFactory.sol`:** Defines functions for the `DAOFactory` contract, such as `createDAO`, `getCoreImplementation`, `getModuleImplementation`.
+*   **`IDAOBase.sol`:** Defines common view functions and enums (like `ProposalType`, `UpgradeableContract`) shared across DAO-related contracts. Inherited by `IDAO`.
+*   **`IDAOProposals.sol`:** Defines functions related to proposal creation (`propose*`) and voting (`vote`). Inherited by `IDAO`.
+*   **`IDAOExecutor.sol`:** Defines the `execute` function for proposals. Inherited by `IDAO`.
+*   **`IDAOEvents.sol`:** Defines common events emitted by the DAO contracts.
+*   **`IDAO.sol`:** Combines `IDAOBase`, `IDAOProposals`, `IDAOExecutor`, and `IDAOEvents` to represent the full interface of the main `DAO` contract.
+*   **`IDAOToken.sol`:** Defines the expected functions for the governance token contract (likely including standard ERC20 functions plus extensions).
+*   **`IDAOStaking.sol`:** Defines the expected functions for the staking contract (`stake`, `unstake`, `getVotingPower`, etc.).
+*   **`IDAOTreasury.sol`:** Defines the expected functions for the treasury contract (`transferETH`, `transferERC20`).
+*   **`IDAOPresale.sol`:** Defines the expected functions for the optional presale module (`buyTokens`, `withdrawToTreasury`, etc.).
+*   **`IDAOModule.sol`:** Defines a common interface or type (`ModuleType` enum) for optional modules.
+*   **`IUpgradeable.sol`:** Defines the `upgradeToAndCall` function required for UUPS proxy upgrades.
+
+Developers interacting with CreateDAO contracts programmatically (e.g., using libraries like ethers.js or viem) will often use these interfaces (typically compiled into ABIs - Application Binary Interfaces) to construct function calls correctly.

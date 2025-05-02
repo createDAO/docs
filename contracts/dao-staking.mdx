@@ -1,0 +1,41 @@
+---
+title: 'DAOStaking Contract'
+description: 'Reference for the DAOStaking.sol implementation contract.'
+---
+
+Source: [`contracts/DAOStaking.sol`](https://github.com/createdao/createdao-contracts/blob/main/contracts/DAOStaking.sol) *(Note: Update link if necessary)*
+
+The `DAOStaking.sol` contract provides the implementation logic for staking the DAO's governance token (`DAOToken`) to determine voting power in governance proposals. It is used behind a `DAOStakingProxy`.
+
+## Key Concepts
+
+*   **Voting Power:** Users stake their `DAOToken` in this contract to gain voting power, which is then used by the `DAO` contract when processing votes (`DAOProposals.vote`) and checking proposal thresholds.
+*   **Token Lockup:** Staking typically involves locking up tokens in the contract for a certain period or until unstaked.
+*   **(Optional) Rewards:** Some staking contracts distribute rewards (often more `DAOToken`) to stakers over time.
+*   **Integration:** Directly interacts with the `DAOToken` contract (to transfer tokens during stake/unstake) and is read by the `DAO` contract (`getVotingPower`).
+
+## Expected Functionality (Based on common patterns and Factory/DAO interactions)
+
+*(This section is a placeholder and will be updated after analyzing `DAOStaking.sol`)*
+
+*   **`stake(uint256 amount)`:** Allows a user to deposit `DAOToken` into the contract. Requires the user to have approved the Staking contract to spend their tokens first.
+*   **`unstake(uint256 amount)`:** Allows a user to withdraw their staked `DAOToken`. May involve conditions or delays.
+*   **`getVotingPower(address account)`:** A view function called by the `DAO` contract to determine the voting power of a specific account based on their staked amount (and potentially other factors like lock duration).
+*   **`totalStaked()`:** A view function returning the total amount of `DAOToken` currently staked in the contract. Used by the `DAO` contract to calculate quorum.
+*   **`claimRewards()`:** If rewards are implemented, this function allows users to claim their accrued staking rewards.
+*   **`initialize(address tokenAddress)`:** An initializer function called by the proxy during deployment via the `DAOFactory`, linking the staking contract to the correct `DAOToken` address.
+*   **`setExecutingProposal(bool)`:** A function likely called by the `DAOExecutor` during upgrades to temporarily bypass certain checks.
+*   **Ownership Transfer:** Likely includes `transferOwnership(address newOwner)` from OpenZeppelin's `OwnableUpgradeable`, with ownership transferred to the `DAO` contract.
+
+## Events
+
+*(This section is a placeholder)*
+
+*   `Staked(address indexed user, uint256 amount)`: Emitted when a user stakes tokens.
+*   `Unstaked(address indexed user, uint256 amount)`: Emitted when a user unstakes tokens.
+*   `RewardClaimed(address indexed user, uint256 amount)`: Emitted when a user claims staking rewards (if applicable).
+*   `OwnershipTransferred(address indexed previousOwner, address indexed newOwner)`.
+
+## Upgradeability
+
+Uses the UUPS proxy pattern. Upgrades are managed via the `DAO` contract's `proposeUpgrade` governance process.

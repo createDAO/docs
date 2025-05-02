@@ -1,0 +1,130 @@
+---
+title: 'Creating a DAO'
+description: 'Step-by-step tutorial for creating a DAO using CreateDAO'
+---
+
+# Creating a DAO
+
+This tutorial will guide you through the process of creating a Decentralized Autonomous Organization (DAO) using CreateDAO. By the end, you'll have deployed a fully functional DAO with governance capabilities, a token, treasury, and staking mechanism.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A Web3 wallet (like MetaMask) installed and set up
+- Some cryptocurrency (ETH, MATIC, etc.) in your wallet for gas fees
+- Basic understanding of blockchain concepts
+
+## Step 1: Connect Your Wallet
+
+1. Go to [CreateDAO.org](https://createdao.org)
+2. Click on the "Create DAO" button in the navigation bar
+3. Click "Connect Wallet" in the top-right corner
+4. Select your wallet provider (MetaMask, WalletConnect, etc.)
+5. Approve the connection request in your wallet
+
+![Connect Wallet](/images/tutorials/connect-wallet.png)
+
+## Step 2: Select a Network
+
+1. Choose the blockchain network where you want to deploy your DAO
+2. If you're not already connected to that network, your wallet will prompt you to switch
+3. Confirm the network switch in your wallet
+
+<Note>
+For testing purposes, we recommend using a testnet like Goerli (Ethereum) or Mumbai (Polygon) first to avoid spending real cryptocurrency.
+</Note>
+
+![Select Network](/images/tutorials/select-network.png)
+
+## Step 3: Enter DAO Details
+
+Fill in the following information for your DAO:
+
+1. **DAO Name**: Enter a name for your organization (e.g., "GreenEarth DAO")
+2. **Token Name**: Enter a name for your governance token (e.g., "GreenEarth Token")
+3. **Token Symbol**: Enter a short symbol for your token (max 6 characters, e.g., "GET")
+4. **Total Supply**: Enter the total number of tokens to create (e.g., "1000000")
+
+<Note>
+The total supply represents the maximum number of tokens that will ever exist. You'll receive 1 token in your wallet, and the rest will be stored in the DAO's treasury.
+</Note>
+
+![Enter DAO Details](/images/tutorials/enter-dao-details.png)
+
+## Step 4: Review and Deploy
+
+1. Review all the information you've entered
+2. Click the "Create DAO" button
+3. Your wallet will prompt you to confirm the transaction
+4. Review the gas fee and confirm the transaction
+
+<Warning>
+Creating a DAO requires deploying multiple smart contracts, which can be gas-intensive. Make sure you have enough cryptocurrency in your wallet to cover the gas fees.
+</Warning>
+
+![Review and Deploy](/images/tutorials/review-deploy.png)
+
+## Step 5: Wait for Deployment
+
+1. The deployment process will begin, and you'll see a progress indicator
+2. This process typically takes 1-3 minutes, depending on network congestion
+3. Do not close the browser window during deployment
+
+![Deployment Progress](/images/tutorials/deployment-progress.png)
+
+## Step 6: Save Your DAO Information
+
+Once deployment is complete, you'll see a success message with important information:
+
+1. **DAO Address**: The address of your main DAO contract
+2. **Token Address**: The address of your governance token
+3. **Treasury Address**: The address of your DAO's treasury
+4. **Staking Address**: The address of your staking contract
+
+<Warning>
+Save this information immediately! These addresses are crucial for managing your DAO. Click the "Copy All Details" button and store them in a secure location.
+</Warning>
+
+![Deployment Success](/images/tutorials/deployment-success.png)
+
+## Step 7: Verify Your DAO
+
+1. Your wallet should now have 1 token from your newly created DAO
+2. The remaining tokens are stored in the DAO's treasury
+3. You can verify this by checking your wallet balance and the treasury contract on a block explorer
+
+## Next Steps
+
+Congratulations! You've successfully created a DAO using CreateDAO. Here's what you can do next:
+
+1. **Manage Your DAO**: Visit [dao.cafe](https://dao.cafe) to manage your DAO, create proposals, and vote
+2. **Stake Tokens**: Stake your tokens to gain voting power
+3. **Create a Proposal**: Propose actions like transferring funds or upgrading contracts
+4. **Invite Members**: Share your DAO address with others to grow your community
+
+For more detailed information on managing your DAO, check out the [Managing a DAO](/tutorials/managing-dao) tutorial.
+
+## Troubleshooting
+
+### Transaction Failed
+
+If your transaction fails during deployment:
+
+1. Check that you have enough cryptocurrency for gas fees
+2. Ensure you're connected to the correct network
+3. Try again with a higher gas limit
+4. If problems persist, check the network status for congestion issues
+
+### DAO Not Appearing
+
+If your DAO doesn't appear after successful deployment:
+
+1. Verify the transaction on the block explorer
+2. Check that you're connected to the correct network
+3. Try refreshing the page or clearing your browser cache
+4. Visit [dao.cafe](https://dao.cafe) and connect your wallet to see if your DAO appears there
+
+### Need Help?
+
+If you encounter any issues not covered here, join our [Discord community](https://discord.gg/createdao) for support.

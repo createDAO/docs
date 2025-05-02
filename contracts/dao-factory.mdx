@@ -1,0 +1,90 @@
+---
+title: 'DAOFactory Contract'
+description: 'Reference for the DAOFactory.sol contract.'
+---
+
+Source: [`contracts/DAOFactory.sol`](https://github.com/createdao/createdao-contracts/blob/main/contracts/DAOFactory.sol) *(Note: Update link if necessary)*
+
+The `DAOFactory` is the central deployment contract for the CreateDAO ecosystem. It is responsible for creating new DAO instances and managing the implementation addresses for the core DAO components and optional modules. It utilizes the UUPS proxy pattern, meaning the factory itself can be upgraded by its owner.
+
+## Key Concepts
+
+*   **Implementation Registry:** The factory stores the addresses of the current logic contracts (implementations) for `DAO`, `DAOToken`, `DAOTreasury`, `DAOStaking`, and optional modules like `DAOPresale`. These are registered by version ID.
+*   **Proxy Deployment:** When `createDAO` is called, the factory deploys new *proxy* contracts (`DAOProxy`, `DAOTokenProxy`, etc.) for the new DAO. These proxies are initialized to point to the latest registered implementation addresses stored in the factory.
+*   **Versioning:** Implementations are registered with version strings (e.g., "1.0.0"). The factory tracks available versions and typically only allows DAO creation using the latest registered version.
+*   **Ownership:** The factory is owned by an address (typically a multisig or governance contract) that has the authority to register new implementation versions and upgrade the factory itself.
+
+## Storage
+
+The contract uses ERC-7201 namespaced storage to minimize storage collisions during upgrades. Key storage variables include:
+*   `coreImplementations`: Mapping from `versionId` string to a `CoreImplementation` struct containing the addresses for DAO, Token, Treasury, and Staking implementations for that version.
+*   `moduleImplementations`: Mapping from `ModuleType` enum and `versionId` string to a `ModuleImplementation` struct.
+*   `availableVersions`: Array storing the registered version IDs for core implementations.
+*   `moduleVersions`: Mapping from `ModuleType` to an array of registered version IDs for that module.
+
+## Key Functions
+
+### `createDAO`
+```solidity
+function createDAO(
+    string calldata versionId,
+    string memory name,
+    string memory tokenName,
+    string memory tokenSymbol,
+    uint256 initialSupply
+) external returns (
+    address daoAddress,
+    address tokenAddress,
+    address treasuryAddress,
+    address stakingAddress
+);
+```
+Deploys a new suite of DAO contracts (DAO, Token, Treasury, Staking proxies) using the implementations registered for the specified `versionId` (must be the latest).
+*   Initializes the Token with the provided name, symbol, and supply (allocating some to the creator `msg.sender` and the rest to the Treasury).
+*   Initializes the Staking contract linked to the new Token.
+*   Initializes the DAO contract, linking it to the Token, Treasury, and Staking contracts.
+*   Initializes the Treasury contract, linking it back to the DAO.
+*   Transfers ownership of Token, Staking, and DAO contracts to the DAO contract itself.
+*   Emits a `DAOCreated` event.
+
+### `registerCoreImplementation`
+```solidity
+function registerCoreImplementation(
+    string calldata versionId,
+    address daoImpl,
+    address tokenImpl,
+    address treasuryImpl,
+    address stakingImpl,
+    bytes calldata initTemplate // Currently unused placeholder
+) external onlyOwner;
+```
+(Owner only) Registers the implementation addresses for the core DAO components under a specific `versionId`. Adds the `versionId` to `availableVersions`. Emits `CoreImplementationRegistered`.
+
+### `registerModuleImplementation`
+```solidity
+function registerModuleImplementation(
+    IDAOModule.ModuleType moduleType,
+    string calldata versionId,
+    address implementation
+) external onlyOwner;
+```
+(Owner only) Registers an implementation address for an optional module (e.g., Presale) under a specific `moduleType` and `versionId`. Adds the `versionId` to the `moduleVersions` mapping for that type. Emits `ModuleImplementationRegistered`.
+
+### View Functions
+*   `getCoreImplementation(string versionId)`: Returns the registered core implementation addresses for a given version.
+*   `getModuleImplementation(IDAOModule.ModuleType moduleType, string versionId)`: Returns the registered implementation address for a given module type and version (must be the latest active version for that module type).
+*   `getLatestVersion()`: Returns the latest registered `versionId` for core implementations.
+*   `getAvailableVersions()`: Returns an array of all registered `versionId`s for core implementations.
+*   `getModuleVersions(IDAOModule.ModuleType moduleType)`: Returns an array of registered `versionId`s for a specific module type.
+*   `getLatestModuleVersion(IDAOModule.ModuleType moduleType)`: Returns the latest registered `versionId` for a specific module type.
+*   `FACTORY_VERSION()` / `getFactoryVersion()`: Returns the hardcoded version string of the `DAOFactory` contract itself.
+
+## Events
+
+*   `DAOCreated(address indexed daoAddress, address indexed tokenAddress, address indexed treasuryAddress, address stakingAddress, string name, string versionId)`: Emitted when a new DAO is successfully deployed.
+*   `CoreImplementationRegistered(string versionId, address daoImpl)`: Emitted when new core implementations are registered.
+*   `ModuleImplementationRegistered(IDAOModule.ModuleType indexed moduleType, string versionId, address implementation, string moduleTypeName)`: Emitted when a new module implementation is registered.
+
+## Upgradeability
+
+The `DAOFactory` itself is upgradeable via the UUPS pattern. The `_authorizeUpgrade` function restricts upgrades to the `owner()`.

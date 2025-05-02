@@ -1,0 +1,29 @@
+---
+title: 'Smart Contracts Reference'
+description: 'Detailed reference for the CreateDAO smart contracts.'
+---
+
+This section provides a detailed breakdown of the core smart contracts used in the CreateDAO ecosystem. Understanding these contracts is essential for developers building on top of CreateDAO or for users who want a deeper technical insight into the platform's mechanics.
+
+## Core Contracts
+
+These contracts form the foundation of every DAO deployed using CreateDAO.
+
+*   **[DAOFactory](./contracts/dao-factory.mdx):** The central contract responsible for deploying new DAOs and managing implementation versions.
+*   **[DAO](./contracts/dao.mdx):** The main governance hub for a deployed DAO, handling proposals and execution logic.
+*   **[DAOToken](./contracts/dao-token.mdx):** The implementation contract for the DAO's governance token (ERC20-based).
+*   **[DAOStaking](./contracts/dao-staking.mdx):** The implementation contract for staking governance tokens to determine voting power.
+*   **[DAOTreasury](./contracts/dao-treasury.mdx):** The implementation contract for managing the DAO's funds.
+
+## Optional Modules
+
+These contracts can be added to a DAO through governance proposals to extend its functionality.
+
+*   **[DAOPresale](./contracts/dao-presale.mdx):** An implementation contract for conducting token presales.
+
+## Architectural Components
+
+*   **[Proxy Contracts](./contracts/proxies.mdx):** Explanation of the UUPS proxy pattern used for upgradeability.
+*   **[Interfaces](./contracts/interfaces.mdx):** Overview of the Solidity interfaces used for contract interactions.
+
+*Note: The detailed pages for `DAOToken`, `DAOStaking`, `DAOTreasury`, and `DAOPresale` currently contain high-level descriptions based on their roles. Specific function details will be added after analyzing their respective source code.*

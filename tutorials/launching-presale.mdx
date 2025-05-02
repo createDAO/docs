@@ -1,0 +1,237 @@
+---
+title: 'Launching a Presale'
+description: 'Step-by-step guide to launching a token presale for your DAO'
+---
+
+# Launching a Presale
+
+This tutorial will guide you through the process of launching a token presale for your DAO. A presale allows your DAO to distribute tokens to early supporters and raise funds for your treasury.
+
+## Understanding DAO Presales
+
+The CreateDAO presale mechanism is designed with several key features:
+
+1. **Tiered Pricing**: Prices increase as more tokens are sold, incentivizing early participation
+2. **Treasury Integration**: All funds raised go directly to your DAO's treasury
+3. **Governance Control**: Only the DAO can create, pause, or withdraw from presales through proposals
+4. **Liquidity Protection**: Built-in slippage protection for buyers and sellers
+5. **Transparent Mechanics**: All presale parameters are visible on-chain
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A DAO created using CreateDAO (see [Creating a DAO](/tutorials/creating-dao))
+- Tokens in your DAO's treasury (these will be used for the presale)
+- Staked tokens to create a proposal (minimum proposal stake)
+- Access to [dao.cafe](https://dao.cafe) for managing your DAO
+
+## Step 1: Plan Your Presale
+
+Before creating a proposal, determine the following parameters:
+
+1. **Token Amount**: How many tokens to allocate to the presale
+2. **Initial Price**: The starting price per token in ETH
+3. **Purpose**: What the raised funds will be used for
+4. **Duration**: How long you expect the presale to run (note: presales don't have a time limit, but you can pause them through a proposal)
+
+<Note>
+The presale contract uses a bonding curve mechanism where the price increases by 25% for each tier. There are 10 tiers in total, with each tier containing 1/10th of the total presale tokens.
+</Note>
+
+## Step 2: Create a Presale Proposal
+
+1. Go to [dao.cafe](https://dao.cafe) and connect your wallet
+2. Navigate to your DAO's dashboard
+3. Click on the "Proposals" tab
+4. Click "Create Proposal"
+5. Select "Presale" as the proposal type
+6. Fill in the following details:
+   - **Token Amount**: The number of tokens to allocate to the presale
+   - **Initial Price**: The starting price per token in ETH
+   - **Description**: A detailed explanation of the presale purpose, token utility, and fund usage
+
+![Create Presale Proposal](/images/tutorials/create-presale-proposal.png)
+
+<Warning>
+Choose your initial price carefully. If set too high, it may discourage participation. If set too low, early participants might immediately sell for a profit.
+</Warning>
+
+## Step 3: Voting Period
+
+1. Share the proposal with your community to encourage voting
+2. The voting period lasts for the duration set in your DAO (default: 5 minutes for testing, typically 3-7 days for production DAOs)
+3. For the proposal to pass, it needs:
+   - Quorum: Enough total votes (default: 50% of total staked tokens)
+   - Majority: More "For" votes than "Against" votes
+
+![Voting on Presale Proposal](/images/tutorials/voting-presale-proposal.png)
+
+## Step 4: Execute the Proposal
+
+Once the proposal passes:
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Proposals" tab
+3. Find the presale proposal with "Pending Execution" status
+4. Click on the proposal to view its details
+5. Click "Execute Proposal"
+6. Confirm the transaction in your wallet
+
+<Note>
+Executing the proposal will:
+1. Deploy a new DAOPresale contract
+2. Transfer the specified amount of tokens from the treasury to the presale contract
+3. Initialize the presale with the specified parameters
+</Note>
+
+![Execute Presale Proposal](/images/tutorials/execute-presale-proposal.png)
+
+## Step 5: Monitor and Promote Your Presale
+
+After execution, your presale is live:
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Presales" tab to view your active presale
+3. Share the presale link with your community
+4. Monitor key metrics:
+   - Current tier and price
+   - Tokens sold
+   - ETH raised
+   - Remaining tokens
+
+![Presale Dashboard](/images/tutorials/presale-dashboard.png)
+
+### Presale Tiers Explained
+
+The presale contract automatically manages price tiers:
+
+1. Each tier contains 1/10th of the total presale tokens
+2. The price increases by 25% for each tier
+3. As tokens are purchased, the contract automatically moves to the next tier when the current tier is depleted
+
+For example, with 100,000 tokens and an initial price of 0.001 ETH:
+- Tier 1: 10,000 tokens at 0.001 ETH each
+- Tier 2: 10,000 tokens at 0.00125 ETH each
+- Tier 3: 10,000 tokens at 0.0015625 ETH each
+- And so on...
+
+## Step 6: Participating in the Presale
+
+Participants can buy tokens from your presale:
+
+1. Navigate to the presale page
+2. Enter the amount of ETH to contribute
+3. Click "Buy Tokens"
+4. Confirm the transaction in the wallet
+
+<Note>
+Participants can also sell tokens back to the presale contract at the current tier price, minus one tier. This provides liquidity but discourages quick flipping.
+</Note>
+
+![Buying Presale Tokens](/images/tutorials/buy-presale-tokens.png)
+
+## Step 7: Managing the Presale
+
+As the DAO, you have several management options:
+
+### Pausing the Presale
+
+If you need to temporarily stop the presale:
+
+1. Create a "Presale Pause" proposal
+2. Specify the presale contract address and set pause to true
+3. After voting and execution, the presale will be paused
+
+### Unpausing the Presale
+
+To resume a paused presale:
+
+1. Create a "Presale Pause" proposal
+2. Specify the presale contract address and set pause to false
+3. After voting and execution, the presale will resume
+
+### Withdrawing Funds
+
+To withdraw funds from the presale to the treasury:
+
+1. Create a "Presale Withdraw" proposal
+2. Specify the presale contract address
+3. After voting and execution, all ETH and remaining tokens will be transferred to the treasury
+
+<Warning>
+Withdrawing funds effectively ends the presale. This action cannot be undone, so only proceed when you're ready to conclude the presale.
+</Warning>
+
+## Best Practices
+
+### Setting the Initial Price
+
+To determine an appropriate initial price:
+
+1. Consider the total valuation you want for your token
+2. Factor in the total supply and the amount allocated to the presale
+3. Research similar projects for benchmark pricing
+4. Start conservatively – it's better to sell out quickly than to have a stagnant presale
+
+### Allocating Tokens
+
+When deciding how many tokens to allocate:
+
+1. Consider your tokenomics plan
+2. Typical presales allocate 10-30% of the total supply
+3. Ensure you retain enough tokens in the treasury for future needs
+4. Consider creating multiple presale phases if needed
+
+### Promoting Your Presale
+
+Effective promotion strategies:
+
+1. Create a detailed announcement with presale information
+2. Provide clear instructions on how to participate
+3. Highlight the token utility and DAO vision
+4. Create a sense of urgency by emphasizing the tiered pricing
+5. Share regular updates on presale progress
+
+### Post-Presale Actions
+
+After a successful presale:
+
+1. Provide a summary of the results to your community
+2. Create a proposal for using the raised funds
+3. Consider creating liquidity pools on decentralized exchanges
+4. Implement any promised features or developments
+
+## Troubleshooting
+
+### Presale Not Starting
+
+If your presale doesn't start after execution:
+
+1. Verify that the proposal was successfully executed
+2. Check that the treasury had enough tokens to allocate
+3. Confirm the presale contract address is correct
+
+### Low Participation
+
+If your presale has low participation:
+
+1. Review your marketing strategy
+2. Consider if the initial price was set too high
+3. Provide more information about token utility
+4. Engage with your community to address concerns
+
+### Technical Issues
+
+If participants encounter technical issues:
+
+1. Verify they're connected to the correct network
+2. Check if the presale is paused
+3. Ensure they have enough ETH for the purchase plus gas fees
+4. Verify slippage settings if using a wallet with custom settings
+
+## Conclusion
+
+Launching a presale is a powerful way to distribute tokens and raise funds for your DAO. By following this guide, you can create a transparent, fair, and effective token distribution mechanism that benefits both your DAO and its early supporters.
+
+For more information on managing your DAO after the presale, refer to the [Managing a DAO](/tutorials/managing-dao) tutorial.

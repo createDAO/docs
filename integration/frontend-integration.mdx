@@ -1,0 +1,483 @@
+---
+title: 'Frontend Integration'
+description: 'Guide to integrating CreateDAO contracts with frontend applications'
+---
+
+# Frontend Integration
+
+This guide explains how to integrate CreateDAO contracts with frontend applications, enabling users to interact with DAOs through a web interface.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Basic knowledge of React or similar frontend frameworks
+- Familiarity with Web3 concepts and Ethereum
+- Node.js and npm/yarn installed
+
+## Setting Up Your Project
+
+### 1. Create a New Project
+
+You can use frameworks like Next.js or Create React App:
+
+```bash
+# Using Next.js (recommended)
+npx create-next-app my-dao-app
+cd my-dao-app
+
+# Or using Create React App
+npx create-react-app my-dao-app
+cd my-dao-app
+```
+
+### 2. Install Dependencies
+
+Install the necessary packages for Web3 integration:
+
+```bash
+# Using npm
+npm install ethers wagmi @rainbow-me/rainbowkit viem
+
+# Using yarn
+yarn add ethers wagmi @rainbow-me/rainbowkit viem
+```
+
+## Wallet Connection
+
+### Setting Up Wallet Connection
+
+Create a wallet connection component using RainbowKit and wagmi:
+
+```jsx
+// src/components/WalletConnection.jsx
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
+
+export function WalletConnection() {
+  const { isConnected, address } = useAccount();
+  
+  return (
+    <div className="wallet-connection">
+      <ConnectButton />
+      {isConnected && (
+        <div className="user-info">
+          <p>Connected as: {address}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Configuring Providers
+
+Set up the necessary providers in your application:
+
+```jsx
+// src/pages/_app.jsx (for Next.js)
+import '@rainbow-me/rainbowkit/styles.css';
+import {
+  getDefaultWallets,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { mainnet, polygon, optimism, arbitrum, base } from 'wagmi/chains';
+import { publicProvider } from 'wagmi/providers/public';
+
+const { chains, publicClient } = configureChains(
+  [mainnet, polygon, optimism, arbitrum, base],
+  [publicProvider()]
+);
+
+const { connectors } = getDefaultWallets({
+  appName: 'My DAO App',
+  projectId: 'YOUR_PROJECT_ID', // Get from WalletConnect
+  chains
+});
+
+const wagmiConfig = createConfig({
+  autoConnect: true,
+  connectors,
+  publicClient
+});
+
+function MyApp({ Component, pageProps }) {
+  return (
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains}>
+        <Component {...pageProps} />
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
+}
+
+export default MyApp;
+```
+
+## Contract Interaction
+
+### Loading Contract ABIs
+
+Create a directory for your contract ABIs:
+
+```jsx
+// src/contracts/abis.js
+export const DAO_FACTORY_ABI = [...]; // DAO Factory ABI
+export const DAO_ABI = [...]; // DAO ABI
+export const DAO_TOKEN_ABI = [...]; // DAO Token ABI
+export const DAO_TREASURY_ABI = [...]; // DAO Treasury ABI
+export const DAO_STAKING_ABI = [...]; // DAO Staking ABI
+```
+
+### Contract Addresses
+
+Create a configuration file for contract addresses:
+
+```jsx
+// src/contracts/addresses.js
+export const CONTRACT_ADDRESSES = {
+  1: { // Ethereum Mainnet
+    daoFactory: '0x...',
+  },
+  137: { // Polygon
+    daoFactory: '0x...',
+  },
+  // Add other networks as needed
+};
+```
+
+### Reading Contract Data
+
+Use wagmi hooks to read data from contracts:
+
+```jsx
+// src/components/DAOInfo.jsx
+import { useContractRead } from 'wagmi';
+import { DAO_ABI } from '../contracts/abis';
+
+export function DAOInfo({ daoAddress }) {
+  const { data: daoName, isLoading } = useContractRead({
+    address: daoAddress,
+    abi: DAO_ABI,
+    functionName: 'name',
+  });
+  
+  const { data: proposalCount } = useContractRead({
+    address: daoAddress,
+    abi: DAO_ABI,
+    functionName: 'proposalCount',
+  });
+  
+  if (isLoading) return <div>Loading DAO info...</div>;
+  
+  return (
+    <div className="dao-info">
+      <h2>{daoName}</h2>
+      <p>Total Proposals: {proposalCount?.toString() || '0'}</p>
+    </div>
+  );
+}
+```
+
+### Writing to Contracts
+
+Use wagmi hooks to write to contracts:
+
+```jsx
+// src/components/CreateProposal.jsx
+import { useState } from 'react';
+import { useContractWrite, useWaitForTransaction } from 'wagmi';
+import { DAO_ABI } from '../contracts/abis';
+
+export function CreateTransferProposal({ daoAddress }) {
+  const [tokenAddress, setTokenAddress] = useState('');
+  const [recipient, setRecipient] = useState('');
+  const [amount, setAmount] = useState('');
+  
+  const { write, data, isLoading } = useContractWrite({
+    address: daoAddress,
+    abi: DAO_ABI,
+    functionName: 'proposeTransfer',
+    args: [tokenAddress, recipient, amount],
+  });
+  
+  const { isLoading: isConfirming, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  });
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    write?.();
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className="proposal-form">
+      <h3>Create Transfer Proposal</h3>
+      
+      <div className="form-group">
+        <label>Token Address (use 0x0 for ETH):</label>
+        <input 
+          type="text" 
+          value={tokenAddress} 
+          onChange={(e) => setTokenAddress(e.target.value)}
+          placeholder="0x0"
+          required
+        />
+      </div>
+      
+      <div className="form-group">
+        <label>Recipient:</label>
+        <input 
+          type="text" 
+          value={recipient} 
+          onChange={(e) => setRecipient(e.target.value)}
+          placeholder="0x..."
+          required
+        />
+      </div>
+      
+      <div className="form-group">
+        <label>Amount (in wei):</label>
+        <input 
+          type="text" 
+          value={amount} 
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="1000000000000000000"
+          required
+        />
+      </div>
+      
+      <button 
+        type="submit" 
+        disabled={isLoading || isConfirming}
+      >
+        {isLoading ? 'Preparing...' : 
+         isConfirming ? 'Confirming...' : 
+         isSuccess ? 'Proposal Created!' : 'Create Proposal'}
+      </button>
+      
+      {isSuccess && (
+        <div className="success-message">
+          Proposal created successfully!
+        </div>
+      )}
+    </form>
+  );
+}
+```
+
+## Displaying DAO Data
+
+### Proposal List
+
+Create a component to display proposals:
+
+```jsx
+// src/components/ProposalList.jsx
+import { useContractRead } from 'wagmi';
+import { DAO_ABI } from '../contracts/abis';
+
+export function ProposalList({ daoAddress }) {
+  const { data: proposalCount, isLoading: isLoadingCount } = useContractRead({
+    address: daoAddress,
+    abi: DAO_ABI,
+    functionName: 'proposalCount',
+  });
+  
+  if (isLoadingCount) return <div>Loading proposals...</div>;
+  
+  const count = proposalCount ? parseInt(proposalCount.toString()) : 0;
+  const proposalIds = Array.from({ length: count }, (_, i) => i + 1);
+  
+  return (
+    <div className="proposal-list">
+      <h3>Proposals</h3>
+      
+      {proposalIds.length === 0 ? (
+        <p>No proposals yet.</p>
+      ) : (
+        <ul>
+          {proposalIds.map((id) => (
+            <ProposalItem key={id} daoAddress={daoAddress} proposalId={id} />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function ProposalItem({ daoAddress, proposalId }) {
+  const { data: proposal, isLoading } = useContractRead({
+    address: daoAddress,
+    abi: DAO_ABI,
+    functionName: 'getProposal',
+    args: [proposalId],
+  });
+  
+  if (isLoading) return <div>Loading proposal {proposalId}...</div>;
+  
+  // Assuming proposal returns [proposalType, forVotes, againstVotes, endTime, executed]
+  const [proposalType, forVotes, againstVotes, endTime, executed] = proposal || [];
+  
+  return (
+    <li className="proposal-item">
+      <h4>Proposal #{proposalId}</h4>
+      <p>Type: {getProposalTypeName(proposalType)}</p>
+      <p>Votes: {forVotes?.toString() || '0'} For / {againstVotes?.toString() || '0'} Against</p>
+      <p>Status: {executed ? 'Executed' : 'Pending'}</p>
+      <p>Voting Ends: {new Date(endTime * 1000).toLocaleString()}</p>
+    </li>
+  );
+}
+
+function getProposalTypeName(typeId) {
+  const types = {
+    0: 'Transfer',
+    1: 'Upgrade',
+    2: 'Module Upgrade',
+    3: 'Presale',
+    4: 'Presale Pause',
+    5: 'Presale Withdraw',
+    6: 'Pause',
+    7: 'Unpause',
+  };
+  
+  return types[typeId] || 'Unknown';
+}
+```
+
+### Treasury Balance
+
+Create a component to display treasury balance:
+
+```jsx
+// src/components/TreasuryBalance.jsx
+import { useContractRead } from 'wagmi';
+import { ethers } from 'ethers';
+import { DAO_ABI, DAO_TREASURY_ABI } from '../contracts/abis';
+
+export function TreasuryBalance({ daoAddress }) {
+  const { data: treasuryAddress } = useContractRead({
+    address: daoAddress,
+    abi: DAO_ABI,
+    functionName: 'upgradeableContracts',
+    args: [1], // 1 is the index for Treasury in the UpgradeableContract enum
+  });
+  
+  const { data: ethBalance, isLoading } = useContractRead({
+    address: treasuryAddress,
+    abi: DAO_TREASURY_ABI,
+    functionName: 'getETHBalance',
+    enabled: Boolean(treasuryAddress),
+  });
+  
+  if (isLoading || !treasuryAddress) return <div>Loading treasury balance...</div>;
+  
+  return (
+    <div className="treasury-balance">
+      <h3>Treasury Balance</h3>
+      <p>ETH: {ethers.utils.formatEther(ethBalance || '0')} ETH</p>
+      {/* Add other token balances as needed */}
+    </div>
+  );
+}
+```
+
+## Handling Network Switching
+
+Create a component to handle network switching:
+
+```jsx
+// src/components/NetworkSelector.jsx
+import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { CONTRACT_ADDRESSES } from '../contracts/addresses';
+
+export function NetworkSelector() {
+  const { chain } = useNetwork();
+  const { chains, error, isLoading, pendingChainId, switchNetwork } = useSwitchNetwork();
+  
+  const supportedChains = chains.filter(c => CONTRACT_ADDRESSES[c.id]);
+  
+  return (
+    <div className="network-selector">
+      <h3>Select Network</h3>
+      
+      <div className="network-buttons">
+        {supportedChains.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => switchNetwork?.(c.id)}
+            disabled={isLoading && pendingChainId === c.id}
+            className={chain?.id === c.id ? 'active' : ''}
+          >
+            {c.name}
+            {isLoading && pendingChainId === c.id && ' (switching)'}
+          </button>
+        ))}
+      </div>
+      
+      {error && <div className="error">{error.message}</div>}
+    </div>
+  );
+}
+```
+
+## Putting It All Together
+
+Create a main DAO dashboard page:
+
+```jsx
+// src/pages/dao/[address].jsx (for Next.js)
+import { useRouter } from 'next/router';
+import { WalletConnection } from '../../components/WalletConnection';
+import { NetworkSelector } from '../../components/NetworkSelector';
+import { DAOInfo } from '../../components/DAOInfo';
+import { ProposalList } from '../../components/ProposalList';
+import { CreateTransferProposal } from '../../components/CreateProposal';
+import { TreasuryBalance } from '../../components/TreasuryBalance';
+
+export default function DAOPage() {
+  const router = useRouter();
+  const { address } = router.query;
+  
+  if (!address) return <div>Loading...</div>;
+  
+  return (
+    <div className="dao-page">
+      <header>
+        <h1>DAO Dashboard</h1>
+        <WalletConnection />
+        <NetworkSelector />
+      </header>
+      
+      <main>
+        <DAOInfo daoAddress={address} />
+        
+        <div className="dashboard-grid">
+          <div className="left-column">
+            <TreasuryBalance daoAddress={address} />
+            <CreateTransferProposal daoAddress={address} />
+          </div>
+          
+          <div className="right-column">
+            <ProposalList daoAddress={address} />
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+## Conclusion
+
+This guide provides a foundation for integrating CreateDAO contracts with your frontend application. You can extend this implementation to include more features like:
+
+- Staking interface
+- Detailed proposal views
+- Voting interface
+- User profiles
+- Analytics and charts
+
+For more detailed information on contract interaction, refer to the [Contract Interaction](/integration/contract-interaction) guide.

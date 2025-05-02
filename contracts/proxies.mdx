@@ -1,0 +1,44 @@
+---
+title: 'Proxy Contracts'
+description: 'Explanation of the proxy pattern used in CreateDAO.'
+---
+
+CreateDAO utilizes the **UUPS (Universal Upgradeable Proxy Standard)** proxy pattern (EIP-1822) extensively to ensure that deployed DAOs and their core modules can be upgraded over time without changing their public addresses or requiring complex data migration.
+
+## What is a Proxy Contract?
+
+A proxy contract acts as a simple forwarder or entry point for users and other contracts. It holds the contract's state (storage variables) but contains very little logic itself. Instead, it delegates all function calls (except for upgrade-related functions) to a separate **implementation contract** that contains the actual business logic.
+
+**Analogy:** Think of the proxy as a stable mailing address (the proxy address never changes) that automatically forwards mail to the current resident (the implementation contract). If the resident moves out and a new one moves in (an upgrade), you still send mail to the same address, but it now reaches the new resident.
+
+## How CreateDAO Uses Proxies
+
+When the `DAOFactory` deploys a new DAO using `createDAO`, it deploys several proxy contracts:
+*   `DAOProxy`
+*   `DAOTokenProxy`
+*   `DAOStakingProxy`
+*   `DAOTreasuryProxy`
+
+Similarly, when a `proposePresale` proposal is executed, the `DAO` contract deploys a `DAOPresaleProxy`.
+
+Each of these proxy contracts is initialized to point to the address of the corresponding *implementation* contract (e.g., `DAO.sol`, `DAOToken.sol`) registered in the `DAOFactory` at the time of deployment.
+
+## UUPS (EIP-1822) Specifics
+
+CreateDAO uses the UUPS variant of the proxy pattern. Key characteristics include:
+
+*   **Upgrade Logic in Implementation:** Unlike some other proxy patterns (like Transparent Proxies), the logic for performing an upgrade (`upgradeToAndCall`) resides within the *implementation* contract itself, not the proxy.
+*   **Authorization:** The implementation contract must include an authorization mechanism (in CreateDAO's case, the `_authorizeUpgrade` function) to control who can trigger an upgrade. For the `DAO.sol` contract and its modules, upgrades are authorized only when called during the execution of a successful `proposeUpgrade` or `proposeModuleUpgrade` governance proposal.
+*   **`delegatecall`:** Proxies use the `delegatecall` opcode to forward calls to the implementation. This means the implementation contract's code executes in the *context* of the proxy contract's storage, allowing the implementation logic to modify the proxy's state.
+
+## Benefits
+
+*   **Upgradeability:** The core benefit. Fix bugs or add features to the DAO's logic by deploying a new implementation contract and executing a governance proposal to point the proxy to the new address.
+*   **Stable Addresses:** Users and integrated applications always interact with the same proxy addresses, simplifying integrations and avoiding broken dependencies after upgrades.
+*   **State Preservation:** The DAO's state (token balances, treasury funds, proposal data, staked amounts) remains stored in the proxy contract and is preserved across upgrades.
+
+## Considerations
+
+*   **Storage Layout:** It is crucial that new implementation contracts maintain the same storage layout (order and types of variables) as the previous version to avoid corrupting the proxy's state. Solidity's inheritance and the use of storage gaps help manage this.
+*   **Initialization:** Implementation contracts must use initializer functions (like `initialize(...)`) instead of constructors, as the constructor code only runs when the implementation contract itself is deployed, not when the proxy is initialized.
+*   **Upgrade Authorization:** The security of the upgrade mechanism is paramount. In CreateDAO, this relies on the security of the DAO's governance process itself.

@@ -1,0 +1,49 @@
+---
+title: 'Core Concepts'
+description: 'Understanding the fundamental ideas behind CreateDAO.'
+---
+
+This section explains the key concepts and architectural components that make up the CreateDAO platform.
+
+## What is a DAO?
+
+A Decentralized Autonomous Organization (DAO) is an organization represented by rules encoded as a computer program (smart contracts) that is transparent, controlled by the organization members, and not influenced by a central authority.
+
+Key characteristics typically include:
+*   **Decentralized Governance:** Decisions are made collectively by members, often through voting with governance tokens.
+*   **Transparency:** Rules, proposals, voting, and treasury transactions are recorded publicly on the blockchain.
+*   **Automation:** Smart contracts automate many organizational functions, such as proposal execution and fund management.
+*   **Community Ownership:** Members often hold tokens that represent ownership or voting rights.
+
+DAOs are used for various purposes, including managing protocols, funding projects, governing communities, and collective asset ownership.
+
+## CreateDAO Architecture Overview
+
+CreateDAO employs a modular and upgradeable architecture built around several key smart contracts:
+
+1.  **Factory (`DAOFactory.sol`)**:
+    *   **Purpose:** Acts as the central deployment hub. Users interact with the factory to launch new DAOs.
+    *   **Functionality:** Holds the addresses of the latest approved implementation contracts for the core DAO components. When `createDAO` is called, it deploys new proxy contracts for the DAO and its modules, pointing them to the registered implementations. It also manages the registration of new implementation versions (controlled by the factory owner).
+
+2.  **Core DAO (`DAO.sol`)**:
+    *   **Purpose:** The central governance contract for a specific deployed DAO. It doesn't hold funds directly but orchestrates actions.
+    *   **Functionality:** Inherits logic for proposal creation/voting (`DAOProposals.sol`) and proposal execution (`DAOExecutor.sol`). It maintains references to the DAO's specific Token, Treasury, and Staking contracts. It enforces governance rules like voting periods, quorum, and minimum proposal stake.
+
+3.  **Core Modules (Proxies & Implementations)**: These are deployed alongside the Core DAO by the Factory.
+    *   **`DAOTokenProxy` / `DAOToken.sol`:** The DAO's specific governance token contract (usually ERC20-based). Used for voting power and potentially other utility.
+    *   **`DAOStakingProxy` / `DAOStaking.sol`:** Handles the staking of the governance token to determine voting power for proposals.
+    *   **`DAOTreasuryProxy` / `DAOTreasury.sol`:** Holds the DAO's funds (native currency and ERC20 tokens). Transfers out of the treasury are controlled exclusively by passed proposals executed through the Core DAO contract.
+
+4.  **Optional Modules (e.g., `DAOPresaleProxy` / `DAOPresale.sol`)**:
+    *   **Purpose:** Provide additional functionality beyond the core setup.
+    *   **Functionality:** These are not deployed initially but can be proposed and deployed via DAO governance (e.g., a `proposePresale` proposal executed by the Core DAO contract would deploy a `DAOPresaleProxy` using an implementation registered in the `DAOFactory`).
+
+5.  **Proxy Contracts & Upgradability (UUPS)**:
+    *   **Purpose:** To allow the underlying logic (implementation) of the DAO and its modules to be updated without changing the contract address or migrating state.
+    *   **Functionality:** CreateDAO uses the UUPS (Universal Upgradeable Proxy Standard) pattern. The `DAOFactory` deploys *proxy* contracts (`DAOProxy`, `DAOTokenProxy`, etc.). These proxies hold the state (data) and delegate calls to separate *implementation* contracts (`DAO.sol`, `DAOToken.sol`, etc.) which contain the logic. Upgrades are initiated via a governance proposal (`proposeUpgrade` or `proposeModuleUpgrade`) on the Core DAO contract. If passed and executed, the `execute` function calls `upgradeToAndCall` on the relevant proxy, pointing it to a new implementation address registered in the `DAOFactory`.
+
+This modular and upgradeable design ensures that DAOs launched with CreateDAO can adapt and evolve over time based on community decisions.
+
+## Supported Blockchains
+
+CreateDAO is designed for EVM (Ethereum Virtual Machine) compatible blockchains. The specific networks where the `DAOFactory` and implementation contracts are deployed may vary. Check the [Deployed Contracts](./deployed-contracts) section for the most up-to-date list of supported networks and contract addresses.

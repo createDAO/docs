@@ -1,0 +1,277 @@
+---
+title: 'Managing a DAO'
+description: 'Learn how to manage your DAO, create proposals, vote, and execute decisions'
+---
+
+# Managing a DAO
+
+This tutorial will guide you through the process of managing your DAO after it has been created. You'll learn how to stake tokens, create proposals, vote, and execute decisions using the dao.cafe platform.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- A DAO created using CreateDAO (see [Creating a DAO](/tutorials/creating-dao))
+- The addresses of your DAO contracts (DAO, Token, Treasury, Staking)
+- A Web3 wallet with at least 1 token from your DAO
+
+## Accessing Your DAO
+
+1. Go to [dao.cafe](https://dao.cafe)
+2. Connect your wallet by clicking the "Connect Wallet" button
+3. Select your wallet provider and approve the connection
+4. Once connected, you should see your DAO listed under "My DAOs"
+5. If your DAO doesn't appear automatically, you can add it manually by clicking "Add DAO" and entering your DAO address
+
+![DAO Dashboard](/images/tutorials/dao-dashboard.png)
+
+## Staking Tokens
+
+Staking tokens is essential for participating in governance. The longer you stake your tokens, the more voting power you gain.
+
+### How to Stake Tokens
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Staking" tab
+3. Enter the amount of tokens you want to stake
+4. Click "Approve" to allow the staking contract to use your tokens
+5. After approval, click "Stake" to complete the staking process
+6. Confirm the transaction in your wallet
+
+<Note>
+Staking multipliers increase your voting power based on staking duration:
+- 1x voting power: Immediately after staking
+- 1.25x voting power: After 1 week of staking
+- 1.5x voting power: After 1 month of staking
+- 2x voting power: After 3 months of staking
+</Note>
+
+![Staking Tokens](/images/tutorials/staking-tokens.png)
+
+### Checking Your Voting Power
+
+1. On the "Staking" tab, you can see your current voting power
+2. This is calculated as: `stakedAmount * timeMultiplier`
+3. Your voting power determines how much influence you have in proposals
+
+## Creating Proposals
+
+Proposals are the primary way to make decisions in your DAO. There are several types of proposals you can create.
+
+### Proposal Types
+
+1. **Transfer Proposal**: Transfer ETH or tokens from the treasury
+2. **Upgrade Proposal**: Upgrade the DAO's smart contracts to a new version
+3. **Presale Proposal**: Create a token presale to raise funds
+4. **Presale Pause Proposal**: Pause or unpause an active presale
+5. **Presale Withdraw Proposal**: Withdraw funds from a completed presale
+6. **Pause/Unpause Proposal**: Pause or unpause the DAO's functionality
+
+### Creating a Transfer Proposal
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Proposals" tab
+3. Click "Create Proposal"
+4. Select "Transfer" as the proposal type
+5. Fill in the following details:
+   - **Token Address**: The address of the token to transfer (use 0x0 for ETH)
+   - **Recipient**: The wallet address to receive the funds
+   - **Amount**: The amount to transfer
+   - **Description**: A clear explanation of why the transfer is needed
+6. Click "Create Proposal"
+7. Confirm the transaction in your wallet
+
+<Warning>
+To create a proposal, you must have at least the minimum proposal stake (default: 1 token). This requirement helps prevent spam proposals.
+</Warning>
+
+![Create Transfer Proposal](/images/tutorials/create-transfer-proposal.png)
+
+### Creating a Presale Proposal
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Proposals" tab
+3. Click "Create Proposal"
+4. Select "Presale" as the proposal type
+5. Fill in the following details:
+   - **Token Amount**: The number of tokens to allocate to the presale
+   - **Initial Price**: The starting price per token in ETH
+   - **Description**: Details about the presale purpose and structure
+6. Click "Create Proposal"
+7. Confirm the transaction in your wallet
+
+![Create Presale Proposal](/images/tutorials/create-presale-proposal.png)
+
+## Voting on Proposals
+
+All staked token holders can vote on proposals.
+
+### How to Vote
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Proposals" tab
+3. Find the proposal you want to vote on
+4. Click on the proposal to view its details
+5. Click either "Vote For" or "Vote Against"
+6. Confirm the transaction in your wallet
+
+<Note>
+Your vote weight is determined by your voting power at the time of voting. Once cast, your vote cannot be changed.
+</Note>
+
+![Voting on a Proposal](/images/tutorials/voting-proposal.png)
+
+### Proposal Status
+
+Proposals can have the following statuses:
+
+- **Active**: Voting is currently open
+- **Pending Execution**: Voting has ended successfully, but the proposal hasn't been executed yet
+- **Executed**: The proposal has been executed
+- **Failed**: The proposal did not meet the required quorum or majority
+
+## Executing Proposals
+
+After a proposal passes, it needs to be executed to take effect.
+
+### Requirements for Execution
+
+A proposal can be executed when:
+1. The voting period has ended
+2. The quorum has been reached (default: 50% of total staked tokens)
+3. More votes are "For" than "Against"
+
+### How to Execute a Proposal
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Proposals" tab
+3. Find the proposal with "Pending Execution" status
+4. Click on the proposal to view its details
+5. Click "Execute Proposal"
+6. Confirm the transaction in your wallet
+
+<Note>
+Anyone can execute a successful proposal, not just the proposer. This ensures that proposals don't get stuck if the proposer becomes unavailable.
+</Note>
+
+![Executing a Proposal](/images/tutorials/execute-proposal.png)
+
+## Managing Treasury
+
+The treasury holds all the DAO's assets, which can only be moved through successful proposals.
+
+### Viewing Treasury Balance
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Treasury" tab
+3. You'll see the current ETH balance and any ERC20 tokens held by the treasury
+
+### Treasury Transactions
+
+1. On the "Treasury" tab, you can view all incoming and outgoing transactions
+2. This includes:
+   - Initial token allocation
+   - Successful transfer proposals
+   - Presale proceeds
+   - Any other funds received by the treasury
+
+![Treasury Dashboard](/images/tutorials/treasury-dashboard.png)
+
+## Managing Presales
+
+If your DAO has created a presale through a successful proposal, you can manage it through the platform.
+
+### Viewing Active Presales
+
+1. Navigate to your DAO's dashboard
+2. Click on the "Presales" tab
+3. You'll see all active and past presales
+
+### Participating in a Presale
+
+1. On the "Presales" tab, find the active presale
+2. Enter the amount of ETH you want to contribute
+3. Click "Buy Tokens"
+4. Confirm the transaction in your wallet
+
+### Monitoring Presale Progress
+
+1. On the presale page, you can view:
+   - Current tier and price
+   - Tokens sold
+   - ETH raised
+   - Your contribution and tokens received
+
+![Presale Dashboard](/images/tutorials/presale-dashboard.png)
+
+## Advanced Management
+
+### Upgrading Contracts
+
+Contract upgrades should be approached with caution and thorough testing.
+
+1. Create an upgrade proposal specifying the new version
+2. If the proposal passes and is executed, all contracts (DAO, Token, Treasury, Staking) will be upgraded to the new implementation
+
+### Emergency Actions
+
+In case of critical issues, the DAO can be paused through a pause proposal.
+
+1. Create a pause proposal with a clear explanation of the emergency
+2. If passed and executed, most DAO functions will be paused except for emergency withdrawals
+3. Create an unpause proposal when the issue is resolved
+
+## Best Practices
+
+### Proposal Descriptions
+
+Write clear, detailed proposal descriptions that include:
+- The purpose of the proposal
+- Expected outcomes
+- Any risks involved
+- Timeline for implementation
+- Links to relevant discussions or documentation
+
+### Community Discussion
+
+Before creating formal proposals:
+1. Discuss ideas with the community through forums or chat
+2. Create a draft proposal for feedback
+3. Refine the proposal based on community input
+4. Submit the formal proposal only after building consensus
+
+### Regular Updates
+
+For ongoing initiatives:
+1. Provide regular updates to the community
+2. Create follow-up proposals as needed
+3. Document progress and challenges
+
+## Troubleshooting
+
+### Proposal Creation Issues
+
+If you can't create a proposal:
+1. Check that you have enough staked tokens to meet the minimum proposal stake
+2. Ensure your tokens have been staked long enough
+3. Verify that the DAO is not paused
+
+### Voting Issues
+
+If you can't vote:
+1. Confirm that you have staked tokens
+2. Check that the voting period hasn't ended
+3. Verify that you haven't already voted on this proposal
+
+### Execution Issues
+
+If a proposal can't be executed:
+1. Verify that the voting period has ended
+2. Check that the proposal passed (quorum reached and more "For" than "Against" votes)
+3. Ensure the DAO is not paused
+
+## Conclusion
+
+Managing a DAO effectively requires active participation, clear communication, and thoughtful governance. By following the processes outlined in this tutorial, you can help ensure your DAO operates smoothly and makes decisions that benefit the community.
+
+For more advanced topics, such as launching a presale, refer to the [Launching a Presale](/tutorials/launching-presale) tutorial.
