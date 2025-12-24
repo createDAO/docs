@@ -14,52 +14,29 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Getting Started",
             "pages": [
               "introduction",
               "getting-started",
-              "core-concepts",
               "deployed-contracts"
             ]
           },
           {
             "group": "Smart Contracts",
             "pages": [
-              "smart-contracts-reference",
-              {
-                "group": "Core Contracts",
-                "pages": [
-                  "contracts/dao-factory",
-                  "contracts/dao",
-                  "contracts/dao-token",
-                  "contracts/dao-staking",
-                  "contracts/dao-treasury"
-                ]
-              },
-              {
-                "group": "Optional Modules",
-                "pages": ["contracts/dao-presale"]
-              },
-              {
-                "group": "Architecture",
-                "pages": ["contracts/proxies", "contracts/interfaces"]
-              }
+              "contracts/dao-factory"
             ]
           },
           {
-            "group": "Integration Guides",
+            "group": "Governance",
             "pages": [
-              "integration/building-management-platform",
-              "integration/frontend-integration",
-              "integration/contract-interaction"
+              "governance/parameters"
             ]
           },
           {
             "group": "Tutorials",
             "pages": [
-              "tutorials/creating-dao",
-              "tutorials/managing-dao",
-              "tutorials/launching-presale"
+              "tutorials/creating-dao"
             ]
           }
         ]
@@ -83,7 +60,6 @@
       "github": "https://github.com/createdao",
       "telegram": "https://t.me/createdao_org",
       "discord": "https://discord.gg/HnRmtP2fph"
-
     }
   }
 }

@@ -1,31 +1,281 @@
 ---
 title: 'Getting Started'
-description: 'Your first steps to creating a DAO with CreateDAO.'
+description: 'Quick start guide for CreateDAO v2'
 ---
 
-This guide will walk you through the essential prerequisites and the basic steps to launch your first DAO using the CreateDAO.org platform.
+# Getting Started
 
-## Prerequisites
+Welcome to CreateDAO v2! This guide will help you understand the basics and get you ready to create your first DAO.
 
-Before you begin, ensure you have the following:
+## What You'll Need
 
-1.  **A Web3 Wallet:** You'll need a browser extension wallet compatible with EVM blockchains (like MetaMask, Rabby, Coinbase Wallet, etc.). This wallet will be used to connect to the platform and sign transactions for deploying your DAO.
-2.  **Network Funds:** Ensure your wallet has sufficient native currency (e.g., ETH on Ethereum, MATIC on Polygon) on the specific blockchain network where you intend to deploy your DAO. These funds are required to pay for the gas fees associated with the deployment transactions.
-3.  **Basic Blockchain Understanding:** Familiarity with concepts like blockchain networks, gas fees, and wallet interactions is helpful.
+Before creating a DAO, make sure you have:
 
-## Quick Start: Creating Your DAO via CreateDAO.org
+1. **A Web3 Wallet**
+   - MetaMask (recommended)
+   - Coinbase Wallet
+   - WalletConnect-compatible wallets
+   - Any EVM-compatible wallet
 
-The CreateDAO.org interface provides the simplest way to launch your DAO. Here’s a high-level overview of the process:
+2. **Cryptocurrency for Gas Fees**
+   - **Base Mainnet**: ~0.002-0.005 ETH
+   - **Sepolia Testnet**: Free SepoliaETH from [faucets](https://sepoliafaucet.com)
 
-1.  **Visit CreateDAO.org:** Navigate to the official website in your browser.
-2.  **Connect Your Wallet:** Use the "Connect Wallet" button to link your Web3 wallet to the platform. Ensure you select the correct network where you want to deploy.
-3.  **Configure Your DAO:** Fill out the DAO creation form. This typically includes:
-    *   **DAO Name:** The name of your organization.
-    *   **Token Name:** The name for your DAO's governance token.
-    *   **Token Symbol:** A short ticker symbol for your token (e.g., MYDAO).
-    *   **Initial Token Supply:** The total amount of tokens to be created initially. *Note: A portion might be allocated to the creator, with the rest going to the DAO Treasury.*
-    *   *(Optional)* Advanced settings might include initial governance parameters like voting periods or quorum requirements (though these are often set to sensible defaults initially and can be changed later via governance).
-4.  **Review and Deploy:** Carefully review all the configuration details. Once satisfied, initiate the deployment process. Your wallet will prompt you to confirm several transactions (for deploying the factory, token, treasury, staking, and DAO contracts). Approve each transaction.
-5.  **Deployment Confirmation:** Wait for the transactions to be confirmed on the blockchain. The interface will usually provide feedback on the progress and confirm once your DAO is successfully deployed. You'll typically receive the addresses of your newly created DAO contract and its associated modules (Token, Treasury, Staking).
+3. **Basic Understanding**
+   - What a DAO is
+   - How blockchain transactions work
+   - Gas fees and wallet confirmation
 
-Congratulations! You have successfully launched your DAO using CreateDAO. You can now proceed to manage it, potentially using a compatible DAO management platform or by interacting directly with the contracts.
+<Tip>
+**First time?** We recommend starting on Sepolia testnet to familiarize yourself with the process before deploying to mainnet.
+</Tip>
+
+---
+
+## Quick Overview: What is CreateDAO v2?
+
+CreateDAO v2 is a platform for deploying complete DAO governance systems using **OpenZeppelin Governor** - the industry-standard framework for on-chain governance.
+
+### What You Get
+
+When you create a DAO, you deploy three smart contracts in one transaction:
+
+<CardGroup cols={3}>
+  <Card title="DAOToken" icon="coins">
+    ERC20 governance token with automatic voting power activation
+  </Card>
+  <Card title="DAOGovernor" icon="users">
+    Proposal and voting system with OpenZeppelin extensions
+  </Card>
+  <Card title="TimelockController" icon="vault">
+    Secure treasury holding 99% of tokens with 1-day execution delay
+  </Card>
+</CardGroup>
+
+### Key Features
+
+**Auto-Delegation**
+- No manual delegation required
+- Voting power activates automatically when you receive tokens
+- Ready to vote immediately
+
+**Secure Treasury**
+- 99% of tokens held in timelock
+- All treasury actions require governance approval
+- 1-day delay before execution for security
+
+**Manager Role**
+- On-chain authorization for DAO management
+- Changeable only through governance
+- Designed for integration with platforms like OpenBook
+
+**Gas Efficient**
+- Uses EIP-1167 minimal proxies (clones)
+- Token and Governor proxies are only 45 bytes each
+- ~69% gas savings vs traditional deployment
+
+---
+
+## Understanding the Architecture
+
+```
+Your DAO = Token + Governor + Treasury
+```
+
+### 1. DAOToken (ERC20Votes)
+
+Your governance token gives holders voting power:
+- **Standard**: ERC20 with 18 decimals
+- **Voting Power**: Built-in checkpoint system
+- **Auto-Delegation**: Automatically activates when tokens are received
+- **Distribution**: 1% to creator, 99% to treasury
+
+### 2. DAOGovernor (OpenZeppelin Governor)
+
+The governance contract manages your DAO:
+- **Proposals**: Any token holder with 1%+ can propose
+- **Voting**: FOR, AGAINST, or ABSTAIN
+- **Quorum**: Minimum 1% participation required
+- **Extensions**: Includes all standard OZ Governor features
+- **Manager Role**: Special address for off-chain authorization
+
+### 3. TimelockController (Treasury)
+
+The secure treasury holds DAO assets:
+- **Holds**: 99% of token supply
+- **Delay**: 1 day between proposal passing and execution
+- **Security**: Prevents rushed or malicious actions
+- **Control**: Only governance can move funds
+
+---
+
+## The Governance Process
+
+### Creating a Proposal
+
+1. You need **1% of token supply** to propose
+2. Proposal includes: target contracts, values, calldata, and description
+3. Voting delay starts (default: 1 day)
+
+### Voting Period
+
+1. After delay, voting opens for a set period (default: 1 week)
+2. Token holders cast votes: FOR, AGAINST, or ABSTAIN
+3. Voting power = token balance at proposal creation time
+
+### Execution
+
+1. If quorum met (1%+) and majority votes FOR, proposal succeeds
+2. Proposal is queued in the timelock
+3. After 1-day delay, anyone can execute
+4. Actions are executed on-chain
+
+---
+
+## Common Use Cases
+
+### Community Organization
+
+Perfect for:
+- Online communities wanting shared decision-making
+- Content creator DAOs
+- Gaming guilds
+- Social clubs going on-chain
+
+### Business Operations
+
+Ideal for:
+- RWA (Real World Asset) management
+- Transparent business operations
+- Multi-stakeholder companies
+- Service cooperatives
+
+**Integration**: Use with [OpenBook](https://openbook.so) for full ERP/CRM/POS with radical transparency.
+
+### Investment Groups
+
+Great for:
+- Collective investment decisions
+- Treasury management
+- Fund allocation
+- Grant programs
+
+---
+
+## Token Distribution Strategy
+
+When you create a DAO:
+- **You get 1%** - Enough to meet quorum and create initial proposals
+- **Treasury gets 99%** - Distributed through governance
+
+### Why 1%?
+
+The 1% allocation is carefully chosen because:
+- OpenZeppelin Governor requires minimum 1% quorum
+- You need exactly 1% to bootstrap governance
+- After setup, you can propose distributing tokens to members
+
+### Distributing to Members
+
+After creating your DAO, create proposals to:
+1. Transfer tokens from treasury to founding members
+2. Set up vesting schedules (via custom contracts)
+3. Reward contributors
+4. Build your community
+
+---
+
+## Governance Parameters
+
+You'll choose these when creating your DAO:
+
+| Parameter | Recommended | Description |
+|-----------|-------------|-------------|
+| **Voting Delay** | 1 day | Time before voting starts |
+| **Voting Period** | 1 week | How long voting lasts |
+| **Quorum** | 1% (fixed) | Minimum participation |
+| **Proposal Threshold** | 1% (fixed) | Tokens needed to propose |
+| **Timelock Delay** | 1 day (fixed) | Security delay before execution |
+
+<Note>
+Voting Delay and Voting Period can be customized during creation. Other parameters are set to optimal defaults and can be changed later through governance.
+</Note>
+
+---
+
+## Supported Networks
+
+CreateDAO v2 is currently deployed on:
+
+<CardGroup cols={2}>
+  <Card title="Base Mainnet" icon="layer-group">
+    Chain ID: 8453
+    
+    Production-ready deployment
+  </Card>
+  <Card title="Sepolia Testnet" icon="flask">
+    Chain ID: 11155111
+    
+    Test your DAO for free
+  </Card>
+</CardGroup>
+
+More networks coming soon! Follow us on [Twitter](https://x.com/createdao) for announcements.
+
+---
+
+## Next Steps
+
+Ready to create your DAO? Follow our step-by-step tutorial:
+
+<Card title="Creating a DAO Tutorial" icon="book-open" href="/tutorials/creating-dao">
+  Complete walkthrough with screenshots and troubleshooting
+</Card>
+
+Or dive into the technical details:
+
+<CardGroup cols={2}>
+  <Card title="DAOFactory Contract" icon="code" href="/contracts/dao-factory">
+    Technical reference
+  </Card>
+  <Card title="Deployed Contracts" icon="map-pin" href="/deployed-contracts">
+    Contract addresses
+  </Card>
+</CardGroup>
+
+---
+
+## Getting Help
+
+Need assistance? We're here to help:
+
+- **Discord**: [discord.gg/HnRmtP2fph](https://discord.gg/HnRmtP2fph)
+- **Telegram**: [t.me/createdao_org](https://t.me/createdao_org)
+- **Twitter**: [@createdao](https://x.com/createdao)
+- **GitHub**: [github.com/createDAO](https://github.com/createDAO)
+
+---
+
+## Additional Resources
+
+### Learn About Governance
+
+- [OpenZeppelin Governor Documentation](https://docs.openzeppelin.com/contracts/5.x/governance)
+- [Tally Governance Platform](https://tally.xyz)
+- [Governance Parameter Guide](/governance/parameters)
+
+### Integration
+
+- [OpenBook](https://openbook.so) - Transparent ERP for DAOs managing real world assets
+- Build your own tools using our open-source contracts
+
+### Community Examples
+
+Check out DAOs built with CreateDAO:
+- Browse on [Tally](https://tally.xyz)
+- View on block explorers (Base, Sepolia)
+- Learn from existing governance proposals
+
+---
+
+**Ready to get started?** [Create your DAO now →](https://createdao.org)

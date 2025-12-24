@@ -1,148 +1,240 @@
 ---
 title: 'Deployed Contracts'
-description: 'Addresses of the CreateDAO core contracts on supported networks.'
+description: 'Addresses of the CreateDAO v2 contracts on supported networks.'
 ---
 
 # Deployed Contracts
 
-This page lists the official addresses for the CreateDAO `DAOFactory` contract and the core implementation contracts (`DAO`, `DAOToken`, `DAOTreasury`, `DAOStaking`, etc.) on various supported blockchain networks.
+This page lists the official addresses for CreateDAO v2 contracts on supported blockchain networks. All contracts use deterministic CREATE2 deployment for consistent addresses across chains.
+
+<Note>
+CreateDAO v2 is a complete rewrite using OpenZeppelin Governor. These addresses are NOT compatible with v1 contracts.
+</Note>
+
+## Contract Architecture
+
+Each network has:
+1. **DAOFactory** - The main factory contract for creating new DAOs
+2. **DAOToken Implementation** - Shared implementation for all DAO tokens (EIP-1167 clones)
+3. **DAOGovernor Implementation** - Shared implementation for all governors (EIP-1167 clones)
+
+When you create a DAO, the factory creates minimal proxies (45 bytes each) that delegate to these implementations.
+
+---
 
 ## Mainnet Deployments
 
-The following are the official contract addresses deployed on mainnet networks. Always verify these addresses when interacting with the contracts.
+### Base (Mainnet)
 
-### Ethereum Mainnet
+| Contract | Address | Explorer Link |
+|----------|---------|---------------|
+| **DAOFactory** | `0xd141662F4b788F28B2a0769a6d3f243D046B571f` | [View on Basescan](https://basescan.org/address/0xd141662F4b788F28B2a0769a6d3f243D046B571f) |
+| DAOToken Implementation | `0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db` | [View on Basescan](https://basescan.org/address/0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db) |
+| DAOGovernor Implementation | `0x2F81fb483fD1B578d16d41e92c62A365b4b04081` | [View on Basescan](https://basescan.org/address/0x2F81fb483fD1B578d16d41e92c62A365b4b04081) |
 
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x22f38c01222E07Efe0B7E0409EF9235B6Ab641d6` | [View on Etherscan](https://etherscan.io/address/0x22f38c01222E07Efe0B7E0409EF9235B6Ab641d6) |
-| DAOFactory Implementation | 1.0.0   | `0xDe560744f4C00CB1b37466178CE235B1e3eB540f` | [View on Etherscan](https://etherscan.io/address/0xDe560744f4C00CB1b37466178CE235B1e3eB540f) |
-| DAO Implementation        | 1.0.0   | `0x086399B18FC6260aC994a118b951514adc8e0804` | [View on Etherscan](https://etherscan.io/address/0x086399B18FC6260aC994a118b951514adc8e0804) |
-| DAOToken Implementation   | 1.0.0   | `0x52B67d1c049CC1D845BB67E4ffD3e0c0F9430cc6` | [View on Etherscan](https://etherscan.io/address/0x52B67d1c049CC1D845BB67E4ffD3e0c0F9430cc6) |
-| DAOTreasury Implementation| 1.0.0   | `0x13c11A44521CE97c543db4C01A4Bf98a9536Be95` | [View on Etherscan](https://etherscan.io/address/0x13c11A44521CE97c543db4C01A4Bf98a9536Be95) |
-| DAOStaking Implementation | 1.0.0   | `0xB47d4dffC2169DCa166EE2Dc44094D7Fbe45D2E1` | [View on Etherscan](https://etherscan.io/address/0xB47d4dffC2169DCa166EE2Dc44094D7Fbe45D2E1) |
-| DAOPresale Implementation | 1.0.0   | `0xc175cd97471C33fA9B0CE09299dB3913dbb472D9` | [View on Etherscan](https://etherscan.io/address/0xc175cd97471C33fA9B0CE09299dB3913dbb472D9) |
-| Test DAO                  | 1.0.0   | `0x426fb253fe6ef349fde604454859cd693737c235` | [View on Etherscan](https://etherscan.io/address/0x426fb253fe6ef349fde604454859cd693737c235) |
+**Example DAO on Base:**
 
+| Contract | Address | Explorer Link |
+|----------|---------|---------------|
+| DAOToken (Proxy) | `0x154EB315Ab729E998847aA55F8b5bC73cf8A61d9` | [View on Basescan](https://basescan.org/address/0x154EB315Ab729E998847aA55F8b5bC73cf8A61d9) |
+| DAOGovernor (Proxy) | `0x4013cdFEB389A4213e8565258D2ac3604bFbB1B3` | [View on Basescan](https://basescan.org/address/0x4013cdFEB389A4213e8565258D2ac3604bFbB1B3) |
+| TimelockController (Treasury) | `0xb8CE0BbD2c5B589Da458677392B255E761E1A15F` | [View on Basescan](https://basescan.org/address/0xb8CE0BbD2c5B589Da458677392B255E761E1A15F) |
 
-### Arbitrum Mainnet
-
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x8d2D2fb9388B16a51263593323aBBDf80aee54e6` | [View on Arbiscan](https://arbiscan.io/address/0x8d2D2fb9388B16a51263593323aBBDf80aee54e6) |
-| DAOFactory Implementation | 1.0.0   | `0x9b541216B78e2dcec4b68919F94368b1edF230bB` | [View on Arbiscan](https://arbiscan.io/address/0x9b541216B78e2dcec4b68919F94368b1edF230bB) |
-| DAO Implementation        | 1.0.0   | `0xB145c8d584CedDccD4f94F66C89756A0631c75C6` | [View on Arbiscan](https://arbiscan.io/address/0xB145c8d584CedDccD4f94F66C89756A0631c75C6) |
-| DAOToken Implementation   | 1.0.0   | `0xaaFac8c7e69454227175CCa3b6b530a54F0bD328` | [View on Arbiscan](https://arbiscan.io/address/0xaaFac8c7e69454227175CCa3b6b530a54F0bD328) |
-| DAOTreasury Implementation| 1.0.0   | `0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D` | [View on Arbiscan](https://arbiscan.io/address/0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D) |
-| DAOStaking Implementation | 1.0.0   | `0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F` | [View on Arbiscan](https://arbiscan.io/address/0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F) |
-| DAOPresale Implementation | 1.0.0   | `0x2A19401B1586173766F6E9bb8E186519c23b7bC8` | [View on Arbiscan](https://arbiscan.io/address/0x2A19401B1586173766F6E9bb8E186519c23b7bC8) |
-| Test DAO                  | 1.0.0   | `0x25718d871117fe677372fde2282334753dbd33f0` | [View on Arbiscan](https://arbiscan.io/address/0x25718d871117fe677372fde2282334753dbd33f0) |
-
-### Base Mainnet
-
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x8d2D2fb9388B16a51263593323aBBDf80aee54e6` | [View on Basescan](https://basescan.org/address/0x8d2D2fb9388B16a51263593323aBBDf80aee54e6) |
-| DAOFactory Implementation | 1.0.0   | `0x9b541216B78e2dcec4b68919F94368b1edF230bB` | [View on Basescan](https://basescan.org/address/0x9b541216B78e2dcec4b68919F94368b1edF230bB) |
-| DAO Implementation        | 1.0.0   | `0xB145c8d584CedDccD4f94F66C89756A0631c75C6` | [View on Basescan](https://basescan.org/address/0xB145c8d584CedDccD4f94F66C89756A0631c75C6) |
-| DAOToken Implementation   | 1.0.0   | `0xaaFac8c7e69454227175CCa3b6b530a54F0bD328` | [View on Basescan](https://basescan.org/address/0xaaFac8c7e69454227175CCa3b6b530a54F0bD328) |
-| DAOTreasury Implementation| 1.0.0   | `0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D` | [View on Basescan](https://basescan.org/address/0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D) |
-| DAOStaking Implementation | 1.0.0   | `0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F` | [View on Basescan](https://basescan.org/address/0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F) |
-| DAOPresale Implementation | 1.0.0   | `0x2A19401B1586173766F6E9bb8E186519c23b7bC8` | [View on Basescan](https://basescan.org/address/0x2A19401B1586173766F6E9bb8E186519c23b7bC8) |
-| Test DAO                  | 1.0.0   | `0x25718d871117fe677372fde2282334753dbd33f0` | [View on Basescan](https://basescan.org/address/0x25718d871117fe677372fde2282334753dbd33f0) |
-
-### Gnosis Mainnet
-
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x8d2D2fb9388B16a51263593323aBBDf80aee54e6` | [View on Gnosisscan](https://gnosisscan.io/address/0x8d2D2fb9388B16a51263593323aBBDf80aee54e6) |
-| DAOFactory Implementation | 1.0.0   | `0x9b541216B78e2dcec4b68919F94368b1edF230bB` | [View on Gnosisscan](https://gnosisscan.io/address/0x9b541216B78e2dcec4b68919F94368b1edF230bB) |
-| DAO Implementation        | 1.0.0   | `0xB145c8d584CedDccD4f94F66C89756A0631c75C6` | [View on Gnosisscan](https://gnosisscan.io/address/0xB145c8d584CedDccD4f94F66C89756A0631c75C6) |
-| DAOToken Implementation   | 1.0.0   | `0xaaFac8c7e69454227175CCa3b6b530a54F0bD328` | [View on Gnosisscan](https://gnosisscan.io/address/0xaaFac8c7e69454227175CCa3b6b530a54F0bD328) |
-| DAOTreasury Implementation| 1.0.0   | `0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D` | [View on Gnosisscan](https://gnosisscan.io/address/0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D) |
-| DAOStaking Implementation | 1.0.0   | `0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F` | [View on Gnosisscan](https://gnosisscan.io/address/0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F) |
-| DAOPresale Implementation | 1.0.0   | `0x2A19401B1586173766F6E9bb8E186519c23b7bC8` | [View on Gnosisscan](https://gnosisscan.io/address/0x2A19401B1586173766F6E9bb8E186519c23b7bC8) |
-| Test DAO                  | 1.0.0   | `0x25718d871117fe677372fde2282334753dbd33f0` | [View on Gnosisscan](https://gnosisscan.io/address/0x25718d871117fe677372fde2282334753dbd33f0) |
-
-### Polygon Mainnet
-
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x8d2D2fb9388B16a51263593323aBBDf80aee54e6` | [View on Polygonscan](https://polygonscan.com/address/0x8d2D2fb9388B16a51263593323aBBDf80aee54e6) |
-| DAOFactory Implementation | 1.0.0   | `0x9b541216B78e2dcec4b68919F94368b1edF230bB` | [View on Polygonscan](https://polygonscan.com/address/0x9b541216B78e2dcec4b68919F94368b1edF230bB) |
-| DAO Implementation        | 1.0.0   | `0xB145c8d584CedDccD4f94F66C89756A0631c75C6` | [View on Polygonscan](https://polygonscan.com/address/0xB145c8d584CedDccD4f94F66C89756A0631c75C6) |
-| DAOToken Implementation   | 1.0.0   | `0xaaFac8c7e69454227175CCa3b6b530a54F0bD328` | [View on Polygonscan](https://polygonscan.com/address/0xaaFac8c7e69454227175CCa3b6b530a54F0bD328) |
-| DAOTreasury Implementation| 1.0.0   | `0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D` | [View on Polygonscan](https://polygonscan.com/address/0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D) |
-| DAOStaking Implementation | 1.0.0   | `0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F` | [View on Polygonscan](https://polygonscan.com/address/0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F) |
-| DAOPresale Implementation | 1.0.0   | `0x2A19401B1586173766F6E9bb8E186519c23b7bC8` | [View on Polygonscan](https://polygonscan.com/address/0x2A19401B1586173766F6E9bb8E186519c23b7bC8) |
-| Test DAO                  | 1.0.0   | `0x25718d871117fe677372fde2282334753dbd33f0` | [View on Polygonscan](https://polygonscan.com/address/0x25718d871117fe677372fde2282334753dbd33f0) |
-
-### Unichain Mainnet
-
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x8d2D2fb9388B16a51263593323aBBDf80aee54e6` | [View on Uniscan](https://uniscan.xyz/address/0x8d2D2fb9388B16a51263593323aBBDf80aee54e6) |
-| DAOFactory Implementation | 1.0.0   | `0x9b541216B78e2dcec4b68919F94368b1edF230bB` | [View on Uniscan](https://uniscan.xyz/address/0x9b541216B78e2dcec4b68919F94368b1edF230bB) |
-| DAO Implementation        | 1.0.0   | `0xB145c8d584CedDccD4f94F66C89756A0631c75C6` | [View on Uniscan](https://uniscan.xyz/address/0xB145c8d584CedDccD4f94F66C89756A0631c75C6) |
-| DAOToken Implementation   | 1.0.0   | `0xaaFac8c7e69454227175CCa3b6b530a54F0bD328` | [View on Uniscan](https://uniscan.xyz/address/0xaaFac8c7e69454227175CCa3b6b530a54F0bD328) |
-| DAOTreasury Implementation| 1.0.0   | `0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D` | [View on Uniscan](https://uniscan.xyz/address/0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D) |
-| DAOStaking Implementation | 1.0.0   | `0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F` | [View on Uniscan](https://uniscan.xyz/address/0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F) |
-| DAOPresale Implementation | 1.0.0   | `0x2A19401B1586173766F6E9bb8E186519c23b7bC8` | [View on Uniscan](https://uniscan.xyz/address/0x2A19401B1586173766F6E9bb8E186519c23b7bC8) |
-| Test DAO                  | 1.0.0   | `0x25718d871117fe677372fde2282334753dbd33f0` | [View on Uniscan](https://uniscan.xyz/address/0x25718d871117fe677372fde2282334753dbd33f0) |
-
-### World Chain Mainnet
-
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0x8d2D2fb9388B16a51263593323aBBDf80aee54e6` | [View on Worldscan](https://worldscan.org/address/0x8d2D2fb9388B16a51263593323aBBDf80aee54e6) |
-| DAOFactory Implementation | 1.0.0   | `0x9b541216B78e2dcec4b68919F94368b1edF230bB` | [View on Worldscan](https://worldscan.org/address/0x9b541216B78e2dcec4b68919F94368b1edF230bB) |
-| DAO Implementation        | 1.0.0   | `0xB145c8d584CedDccD4f94F66C89756A0631c75C6` | [View on Worldscan](https://worldscan.org/address/0xB145c8d584CedDccD4f94F66C89756A0631c75C6) |
-| DAOToken Implementation   | 1.0.0   | `0xaaFac8c7e69454227175CCa3b6b530a54F0bD328` | [View on Worldscan](https://worldscan.org/address/0xaaFac8c7e69454227175CCa3b6b530a54F0bD328) |
-| DAOTreasury Implementation| 1.0.0   | `0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D` | [View on Worldscan](https://worldscan.org/address/0x9242a33dc5e6C7b010866BDDb1e2C5c4931F5a4D) |
-| DAOStaking Implementation | 1.0.0   | `0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F` | [View on Worldscan](https://worldscan.org/address/0xD2F83f224fb0F80b2aCeDe80B434233Dcf12ea5F) |
-| DAOPresale Implementation | 1.0.0   | `0x2A19401B1586173766F6E9bb8E186519c23b7bC8` | [View on Worldscan](https://worldscan.org/address/0x2A19401B1586173766F6E9bb8E186519c23b7bC8) |
-| Test DAO                  | 1.0.0   | `0x25718d871117fe677372fde2282334753dbd33f0` | [View on Worldscan](https://worldscan.org/address/0x25718d871117fe677372fde2282334753dbd33f0) |
+---
 
 ## Testnet Deployments
 
-The following are the official contract addresses deployed on testnet networks for development and testing purposes.
-
 ### Sepolia (Ethereum Testnet)
 
-| Contract Name             | Version | Address                                      | Explorer Link |
-| :------------------------ | :------ | :------------------------------------------- | :------------ |
-| **DAOFactoryProxy**       | 1.0.0   | `0xcC961E2a43762caD4c673d471b9fcddE233716Dd` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0xcC961E2a43762caD4c673d471b9fcddE233716Dd) |
-| DAOFactory Implementation | 1.0.0   | `0x9F56bA972E3B81E0682AB9c2284BB0E7FC83EE61` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x9F56bA972E3B81E0682AB9c2284BB0E7FC83EE61) |
-| DAO Implementation        | 1.0.0   | `0x5B40fE436a4Cb11c788e02d86DEEf3519648a29d` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x5B40fE436a4Cb11c788e02d86DEEf3519648a29d) |
-| DAOToken Implementation   | 1.0.0   | `0x5a99529F540275084fb742DC859F0891BAC17891` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x5a99529F540275084fb742DC859F0891BAC17891) |
-| DAOTreasury Implementation| 1.0.0   | `0x1e1aDbDBb0590730e9141D6D0D289AbceFAAD1e3` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x1e1aDbDBb0590730e9141D6D0D289AbceFAAD1e3) |
-| DAOStaking Implementation | 1.0.0   | `0x33eD1F5a62bF4B1a6edB9CdC8D6a0272B0f34045` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x33eD1F5a62bF4B1a6edB9CdC8D6a0272B0f34045) |
-| DAOPresale Implementation | 1.0.0   | `0x0800254812dcde4541beEa0eb7B245B5A54A1DCe` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x0800254812dcde4541beEa0eb7B245B5A54A1DCe) |
-| Test DAO                  | 1.0.0   | `0x5DA9a78704A3Fa89a2Dd4E860A4053323F3932cd` | [View on Sepolia Etherscan](https://sepolia.etherscan.io/address/0x5DA9a78704A3Fa89a2Dd4E860A4053323F3932cd) |
+| Contract | Address | Explorer Link |
+|----------|---------|---------------|
+| **DAOFactory** | `0xd141662F4b788F28B2a0769a6d3f243D046B571f` | [View on Etherscan](https://sepolia.etherscan.io/address/0xd141662F4b788F28B2a0769a6d3f243D046B571f) |
+| DAOToken Implementation | `0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db` | [View on Etherscan](https://sepolia.etherscan.io/address/0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db) |
+| DAOGovernor Implementation | `0x2F81fb483fD1B578d16d41e92c62A365b4b04081` | [View on Etherscan](https://sepolia.etherscan.io/address/0x2F81fb483fD1B578d16d41e92c62A365b4b04081) |
 
-## Deployment Verification
+**Example DAO on Sepolia:**
 
-### How to Verify Contract Authenticity
+| Contract | Address | Explorer Link |
+|----------|---------|---------------|
+| DAOToken (Proxy) | `0x2F524705E04aFa3b450a8C60f04975630B6deff4` | [View on Etherscan](https://sepolia.etherscan.io/address/0x2F524705E04aFa3b450a8C60f04975630B6deff4) |
+| DAOGovernor (Proxy) | `0x707e6c8d2C52C16eA4F93e41932b11e34814B4B0` | [View on Etherscan](https://sepolia.etherscan.io/address/0x707e6c8d2C52C16eA4F93e41932b11e34814B4B0) |
+| TimelockController (Treasury) | `0x2cA78756658e85DC5F175363553225881e8537FC` | [View on Etherscan](https://sepolia.etherscan.io/address/0x2cA78756658e85DC5F175363553225881e8537FC) |
 
-To ensure you're interacting with the official CreateDAO contracts, follow these verification steps:
+---
 
-1. **Check the Source Code**: All official contracts have verified source code on block explorers. You can view the code by clicking the "Contract" tab on the explorer page.
+## Deterministic Deployment Details
 
-2. **Verify Implementation Addresses**: The DAOFactory contract has a `getCoreImplementation` function that returns the addresses of the current implementation contracts. You can call this function to verify that the implementation addresses match the ones listed above.
+All CreateDAO v2 contracts use CREATE2 for deterministic deployment, ensuring consistent addresses across networks.
 
-3. **Check the Factory Owner**: The DAOFactory contract has an `owner` function that returns the address of the contract owner. The official owner address is `0x983332bB0b689Ed97907F658525d19F4D876D96c`.
+**CREATE2 Configuration:**
+```
+CREATE2 Deployer: 0x4e59b44847b379578588920cA78FbF26c0B4956C
+Salt: CreateDAO_Production_v2_0_0
+Salt Hash: 0x86e878d0db536a6fd426beb56994c299552f4885e0000a9bb0b08f46860e1fdb
+Init Code Hash: 0xb88b2130abbf8e7570a958fcdc98f4143b26f2bd1d7ad95c56b62f31350f8485
+```
 
-4. **Verify Contract Version**: Each contract has a `version` function that returns the version string. You can call this function to verify that the contract is the expected version.
+This means the DAOFactory address is **identical across all supported chains** when deployed with the same salt.
 
-### Using Etherscan to Verify
+---
 
-1. Go to the contract address on Etherscan or the appropriate block explorer.
-2. Click on the "Contract" tab.
-3. Verify that the contract is verified and the source code is available.
-4. Check that the contract name and version match what you expect.
+## Verifying Contract Authenticity
+
+### Method 1: Check Factory Address
+
+The official DAOFactory address is:
+```
+0xd141662F4b788F28B2a0769a6d3f243D046B571f
+```
+
+Always verify you're interacting with this address on the correct network.
+
+### Method 2: Query Implementation Addresses
+
+You can verify the implementation addresses programmatically:
+
+```javascript
+import { ethers } from 'ethers';
+
+const factory = await ethers.getContractAt(
+    "DAOFactory",
+    "0xd141662F4b788F28B2a0769a6d3f243D046B571f"
+);
+
+const [tokenImpl, governorImpl] = await factory.getImplementations();
+
+console.log("Token Implementation:", tokenImpl);
+console.log("Governor Implementation:", governorImpl);
+```
+
+Expected results:
+- Token: `0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db`
+- Governor: `0x2F81fb483fD1B578d16d41e92c62A365b4b04081`
+
+### Method 3: Verify Source Code
+
+All contracts have verified source code on block explorers:
+
+1. Visit the contract on the explorer
+2. Click the **"Contract"** tab
+3. Verify source code is visible and matches the [GitHub repository](https://github.com/createDAO/v2-core)
+
+---
+
+## Understanding Your DAO's Contracts
+
+When you create a DAO using the factory, you get three contracts:
+
+### 1. DAOToken (EIP-1167 Proxy)
+
+- **Type**: Minimal proxy (45 bytes)
+- **Delegates to**: DAOToken Implementation
+- **Functionality**: ERC20 governance token with auto-delegation
+- **Your Instance**: Each DAO gets its own isolated proxy
+
+### 2. DAOGovernor (EIP-1167 Proxy)
+
+- **Type**: Minimal proxy (45 bytes)
+- **Delegates to**: DAOGovernor Implementation
+- **Functionality**: Governance with OpenZeppelin extensions + Manager role
+- **Your Instance**: Each DAO gets its own isolated proxy
+
+### 3. TimelockController (Full Contract)
+
+- **Type**: Full contract deployment (not a proxy)
+- **Functionality**: Treasury + execution delay
+- **Holds**: 99% of your DAO's token supply
+
+---
+
+## Integration Examples
+
+### Connect to Factory
+
+```javascript
+import { createPublicClient, http } from 'viem';
+import { base } from 'viem/chains';
+
+const client = createPublicClient({
+  chain: base,
+  transport: http()
+});
+
+const FACTORY_ADDRESS = '0xd141662F4b788F28B2a0769a6d3f243D046B571f';
+
+// Read DAO count
+const daoCount = await client.readContract({
+  address: FACTORY_ADDRESS,
+  abi: DAOFactoryABI,
+  functionName: 'getDAOCount'
+});
+```
+
+### Verify Manager
+
+```javascript
+// Check who the current manager is for a DAO
+const managerAddress = await client.readContract({
+  address: GOVERNOR_ADDRESS,
+  abi: DAOGovernorABI,
+  functionName: 'manager'
+});
+
+console.log("Current Manager:", managerAddress);
+```
+
+---
+
+## Network Information
+
+### Base (Mainnet)
+
+- **Chain ID**: 8453
+- **RPC**: `https://mainnet.base.org`
+- **Explorer**: https://basescan.org
+- **Currency**: ETH
+- **Type**: L2 (Optimistic Rollup)
+
+### Sepolia (Testnet)
+
+- **Chain ID**: 11155111
+- **RPC**: `https://rpc.ankr.com/eth_sepolia`
+- **Explorer**: https://sepolia.etherscan.io
+- **Currency**: SepoliaETH (testnet)
+- **Faucet**: [sepoliafaucet.com](https://sepoliafaucet.com)
+
+---
+
+## Coming Soon
+
+CreateDAO v2 will expand to additional networks. Stay tuned for announcements on:
+
+- Polygon
+- Arbitrum
+- Optimism
+- Other EVM-compatible chains
+
+Follow us on [Twitter](https://x.com/createdao) for deployment announcements.
+
+---
 
 ## Security Notice
 
-**Important:** Always verify contract addresses from official CreateDAO sources before interacting with them. Do not trust addresses provided by unofficial third parties.
+<Warning>
+**Always verify contract addresses** from official CreateDAO sources before interacting with them. Do not trust addresses provided by third parties.
+</Warning>
 
-If you discover a contract claiming to be from CreateDAO but not listed here, please report it to the team immediately.
+If you discover a contract claiming to be CreateDAO but not listed here, please report it immediately:
+- **Discord**: [discord.gg/HnRmtP2fph](https://discord.gg/HnRmtP2fph)
+- **Email**: security@createdao.org
+- **GitHub**: [github.com/createDAO/v2-core/issues](https://github.com/createDAO/v2-core/issues)
+
+---
+
+## Source Code & Verification
+
+- **Contracts Repository**: [github.com/createDAO/v2-core](https://github.com/createDAO/v2-core)
+- **License**: MIT
+- **Audits**: Coming soon
+
+All contracts are verified on their respective block explorers with matching source code from the GitHub repository.

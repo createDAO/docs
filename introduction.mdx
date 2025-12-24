@@ -1,49 +1,122 @@
 ---
 title: 'Introduction'
-description: 'Welcome to the CreateDAO documentation.'
+description: 'Welcome to the CreateDAO v2 documentation.'
 ---
 
 ## What is CreateDAO?
 
-CreateDAO is an open-source platform designed to simplify the creation and deployment of Decentralized Autonomous Organizations (DAOs) across multiple blockchain networks. It provides a standardized, secure, and upgradeable set of smart contracts based on industry best practices, coupled with user-friendly interfaces to make DAO creation accessible to everyone, regardless of their technical expertise.
+CreateDAO is an open-source platform for deploying complete, independent DAO governance systems on EVM-compatible blockchains. Built on battle-tested **OpenZeppelin Governor** contracts, CreateDAO v2 provides a secure, standardized foundation for decentralized organizations.
 
-The core of CreateDAO is a factory contract system that allows users to deploy a suite of essential DAO components, including:
-*   A Governance Token (ERC20-based)
-*   A Staking Contract for voting power
-*   A Treasury Contract to manage funds
-*   The main DAO contract orchestrating governance (proposals and execution)
+Each DAO deployment includes three core components:
+- **DAOToken** - ERC20 governance token with voting power (ERC20Votes)
+- **DAOGovernor** - Proposal and voting management with OpenZeppelin extensions
+- **TimelockController** - Secure treasury with execution delay
 
-Optional modules, like Presale contracts, can be added later through the DAO's own governance process.
+All three contracts are deployed in a single transaction via the **DAOFactory**, using the gas-efficient EIP-1167 minimal proxy (Clones) pattern.
 
-## Vision and Goals
+## Why OpenZeppelin Governor?
 
-Our vision is to empower communities and organizations to self-govern effectively and transparently using blockchain technology. We aim to lower the barrier to entry for DAO creation by providing:
+Version 2 is a complete rewrite, rebuilt from the ground up using OpenZeppelin's industry-standard governance contracts instead of custom implementations. This brings:
 
-*   **Simplicity:** An intuitive process for launching a fully functional DAO.
-*   **Security:** Audited and battle-tested smart contract patterns.
-*   **Flexibility:** Support for multiple blockchains and upgradeable contracts.
-*   **Accessibility:** Open-source code and free-to-use tools.
-*   **Interoperability:** Standardized contracts that can integrate with other platforms (like DAO management tools).
-
-Our goal is to become the go-to foundational layer for DAO creation, fostering innovation and decentralization across the web3 ecosystem.
+- **Security**: Battle-tested, audited contracts trusted by the ecosystem
+- **Compatibility**: Works seamlessly with existing governance tools (Tally, Defender)
+- **Simplicity**: Proven patterns instead of custom logic
+- **Standards**: Full compliance with governance standards (ERC-6372, ERC-5805)
 
 ## Key Features
 
-*   **Multi-Chain Deployment:** Launch your DAO on various supported EVM-compatible blockchains.
-*   **Standardized & Upgradeable Contracts:** Utilizes the UUPS proxy pattern for seamless upgrades via DAO governance.
-*   **Core Modules Included:** Token, Staking, Treasury, and Governance logic deployed together.
-*   **Optional Modules:** Extend DAO functionality (e.g., Presale) through proposals.
-*   **Gas Efficient:** Optimized contracts to minimize deployment and interaction costs.
-*   **Open Source:** All code is publicly available under a Business Source License (BUSL-1.1), transitioning to a more permissive license over time.
-*   **User Interface:** A web application (CreateDAO.org) provides a guided experience for DAO creation.
+### Auto-Delegation
+Token holders automatically receive voting power when they receive tokens for the first time. No manual delegation step required - your tokens are ready to vote immediately.
 
-## Who is this Documentation For?
+### Secure Treasury
+The TimelockController holds 99% of the token supply and acts as the DAO's treasury. All fund movements require governance approval and include a 1-day execution delay for security.
 
-This documentation is intended for a wide audience, including:
+### Manager Role
+Each DAO has an on-chain **Manager** address that can be queried via RPC. This role is designed for integration with DAO management platforms like **OpenBook** - providing on-chain authorization for off-chain operations.
 
-*   **Community Leaders & Founders:** Individuals looking to launch a DAO for their project or community.
-*   **Developers:** Those who want to understand the underlying smart contracts, integrate with CreateDAO, or build applications on top of it (like DAO management platforms).
-*   **DAO Members:** Participants who want to learn how their CreateDAO-based organization functions, including governance processes.
-*   **Anyone interested in DAOs:** Individuals curious about DAO architecture and the CreateDAO implementation.
+The Manager address:
+- Is set to the DAO creator at deployment
+- Can only be changed through governance proposals
+- Serves as the "on-chain source of truth" for operational authority
+- Enables trusted individuals to manage day-to-day operations while maintaining transparency
 
-Whether you're deploying your first DAO or are an experienced developer, these docs aim to provide the information you need.
+**OpenBook Integration**: [OpenBook](https://openbook.so) is a transparent ERP/CRM/POS platform built specifically for DAOs managing Real World Assets. It uses the Manager role to verify authorization while providing complete financial transparency - all accounting data is public, ensuring accountability without voting fatigue.
+
+### Gas Efficient
+Using EIP-1167 minimal proxies, each new DAO costs significantly less gas to deploy. Token and Governor contracts are only 45 bytes each, with all logic delegated to shared implementation contracts.
+
+### Token Distribution
+- **1% to Creator**: Enables the creator to meet quorum and create initial proposals
+- **99% to Treasury**: Held securely in the TimelockController, distributed through governance
+
+## Architecture Overview
+
+```mermaid
+flowchart TD
+    Factory["DAOFactory<br/>- Deploys implementations once in constructor<br/>- Creates complete DAO systems via Clones (EIP-1167)<br/>- Tracks all deployed DAOs"]
+    
+    Token["DAOToken (Proxy)<br/>EIP-1167<br/><br/>ERC20Votes<br/>ERC20Permit<br/>Auto-delegate<br/><br/>1% → Creator<br/>99% → Treasury"]
+    
+    Timelock["TimelockController<br/>(Treasury)<br/><br/>Holds 99% tokens<br/>1-day delay"]
+    
+    Governor["DAOGovernor (Proxy)<br/>EIP-1167<br/><br/>Governor<br/>+ Extensions<br/>+ Manager role<br/><br/>Quorum: 1%<br/>Threshold: 1%"]
+    
+    Factory -->|"createDAO()"| Token
+    Factory -->|"createDAO()"| Timelock
+    Factory -->|"createDAO()"| Governor
+```
+
+## Default Governance Settings
+
+| Setting | Value | Description |
+|---------|-------|-------------|
+| Creator Allocation | 1% | Tokens sent to DAO creator (auto-delegated) |
+| Treasury Allocation | 99% | Tokens held in TimelockController |
+| Quorum | 1% | Minimum participation for valid proposals |
+| Proposal Threshold | 1% | Tokens required to create proposals |
+| Voting Delay | 1 day | Time before voting starts after proposal creation |
+| Voting Period | 1 week | Duration of the voting period |
+| Timelock Delay | 1 day | Execution delay after proposal passes |
+
+All governance parameters can be updated later through governance proposals.
+
+## Supported Networks
+
+CreateDAO v2 is deployed on:
+- **Base** (Mainnet)
+- **Sepolia** (Testnet)
+
+The DAOFactory uses deterministic CREATE2 deployment, enabling identical addresses across chains.
+
+## Who is This Documentation For?
+
+This documentation is intended for:
+
+- **Community Leaders & Founders**: Launch a DAO for your project or organization
+- **Developers**: Integrate with CreateDAO or build on top of it
+- **DAO Members**: Understand how your CreateDAO-based organization functions
+- **Anyone Curious About DAOs**: Learn about DAO architecture and the OpenZeppelin Governor pattern
+
+## Open Source
+
+All code is publicly available and open source:
+- **Contracts Repository**: [createDAO/v2-core](https://github.com/createDAO/v2-core)
+- **Interface Repository**: [createDAO/interface](https://github.com/createDAO/interface)
+- **License**: MIT License
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Getting Started" icon="rocket" href="/getting-started">
+    Learn the basics and create your first DAO
+  </Card>
+  <Card title="DAOFactory Contract" icon="code" href="/contracts/dao-factory">
+    Technical reference for the factory contract
+  </Card>
+  <Card title="Creating a DAO" icon="book" href="/tutorials/creating-dao">
+    Step-by-step tutorial
+  </Card>
+  <Card title="Deployed Contracts" icon="map-pin" href="/deployed-contracts">
+    Contract addresses on all networks
+  </Card>
+</CardGroup>

@@ -1,90 +1,280 @@
 ---
 title: 'DAOFactory Contract'
-description: 'Reference for the DAOFactory.sol contract.'
+description: 'Reference for the DAOFactory.sol contract in CreateDAO v2.'
 ---
 
-Source: [`contracts/DAOFactory.sol`](https://github.com/createdao/createdao-contracts/blob/main/contracts/DAOFactory.sol) *(Note: Update link if necessary)*
+Source: [`contracts/DAOFactory.sol`](https://github.com/createDAO/v2-core)
 
-The `DAOFactory` is the central deployment contract for the CreateDAO ecosystem. It is responsible for creating new DAO instances and managing the implementation addresses for the core DAO components and optional modules. It utilizes the UUPS proxy pattern, meaning the factory itself can be upgraded by its owner.
+The `DAOFactory` is the central deployment contract for CreateDAO v2. It deploys complete DAO governance systems using the **EIP-1167 minimal proxy (Clones) pattern** for gas efficiency.
+
+## Overview
+
+The factory contains implementation contracts for DAOToken and DAOGovernor, deployed once in the constructor. When creating a new DAO, it clones these implementations and deploys a fresh TimelockController, configuring all three contracts to work together as a complete governance system.
 
 ## Key Concepts
 
-*   **Implementation Registry:** The factory stores the addresses of the current logic contracts (implementations) for `DAO`, `DAOToken`, `DAOTreasury`, `DAOStaking`, and optional modules like `DAOPresale`. These are registered by version ID.
-*   **Proxy Deployment:** When `createDAO` is called, the factory deploys new *proxy* contracts (`DAOProxy`, `DAOTokenProxy`, etc.) for the new DAO. These proxies are initialized to point to the latest registered implementation addresses stored in the factory.
-*   **Versioning:** Implementations are registered with version strings (e.g., "1.0.0"). The factory tracks available versions and typically only allows DAO creation using the latest registered version.
-*   **Ownership:** The factory is owned by an address (typically a multisig or governance contract) that has the authority to register new implementation versions and upgrade the factory itself.
+### EIP-1167 Minimal Proxies (Clones)
 
-## Storage
+Instead of deploying full contract bytecode for each DAO, the factory uses OpenZeppelin's `Clones` library to create minimal proxy contracts (only 45 bytes each!) that delegate all calls to shared implementation contracts.
 
-The contract uses ERC-7201 namespaced storage to minimize storage collisions during upgrades. Key storage variables include:
-*   `coreImplementations`: Mapping from `versionId` string to a `CoreImplementation` struct containing the addresses for DAO, Token, Treasury, and Staking implementations for that version.
-*   `moduleImplementations`: Mapping from `ModuleType` enum and `versionId` string to a `ModuleImplementation` struct.
-*   `availableVersions`: Array storing the registered version IDs for core implementations.
-*   `moduleVersions`: Mapping from `ModuleType` to an array of registered version IDs for that module.
+**Benefits:**
+- **Massive Gas Savings**: Each proxy is only 45 bytes vs ~15KB+ for full contracts
+- **Factory Size**: Keeps factory under the 24KB contract size limit
+- **Immutable**: Proxies are not upgradeable - they permanently point to their implementation
+- **Identical Behavior**: Function identically to full contracts
+
+### Deterministic Deployment (CREATE2)
+
+The factory itself is deployed using Arachnid's deterministic CREATE2 deployer, which means:
+- **Same address across chains** when using the same salt
+- **Predictable addresses** before deployment
+- **Easy multi-chain deployment**
+
+## Architecture
+
+```mermaid
+flowchart TD
+    Factory[DAOFactory]
+    
+    subgraph Constructor["Constructor (runs once)"]
+        direction LR
+        TokenImpl[tokenImplementation = new DAOToken]
+        GovImpl[governorImplementation = new DAOGovernor]
+    end
+    
+    subgraph CreateDAO["createDAO()"]
+        direction TB
+        CloneToken[Clone DAOToken → 45 bytes proxy]
+        DeployTimelock[Deploy TimelockController → full contract]
+        CloneGovernor[Clone DAOGovernor → 45 bytes proxy]
+        ConfigRoles[Configure roles and permissions]
+        DistributeTokens[Distribute tokens: 1% creator, 99% treasury]
+        
+        CloneToken --> DeployTimelock
+        DeployTimelock --> CloneGovernor
+        CloneGovernor --> ConfigRoles
+        ConfigRoles --> DistributeTokens
+    end
+    
+    Factory --> Constructor
+    Factory --> CreateDAO
+```
 
 ## Key Functions
 
 ### `createDAO`
+
 ```solidity
 function createDAO(
-    string calldata versionId,
-    string memory name,
+    string memory daoName,
     string memory tokenName,
     string memory tokenSymbol,
-    uint256 initialSupply
+    uint256 totalSupply,
+    uint48 votingDelay,
+    uint32 votingPeriod
 ) external returns (
-    address daoAddress,
-    address tokenAddress,
-    address treasuryAddress,
-    address stakingAddress
+    address token,
+    address timelock,
+    address governor
 );
 ```
-Deploys a new suite of DAO contracts (DAO, Token, Treasury, Staking proxies) using the implementations registered for the specified `versionId` (must be the latest).
-*   Initializes the Token with the provided name, symbol, and supply (allocating some to the creator `msg.sender` and the rest to the Treasury).
-*   Initializes the Staking contract linked to the new Token.
-*   Initializes the DAO contract, linking it to the Token, Treasury, and Staking contracts.
-*   Initializes the Treasury contract, linking it back to the DAO.
-*   Transfers ownership of Token, Staking, and DAO contracts to the DAO contract itself.
-*   Emits a `DAOCreated` event.
 
-### `registerCoreImplementation`
-```solidity
-function registerCoreImplementation(
-    string calldata versionId,
-    address daoImpl,
-    address tokenImpl,
-    address treasuryImpl,
-    address stakingImpl,
-    bytes calldata initTemplate // Currently unused placeholder
-) external onlyOwner;
-```
-(Owner only) Registers the implementation addresses for the core DAO components under a specific `versionId`. Adds the `versionId` to `availableVersions`. Emits `CoreImplementationRegistered`.
+Deploys a complete DAO system in a single transaction.
 
-### `registerModuleImplementation`
-```solidity
-function registerModuleImplementation(
-    IDAOModule.ModuleType moduleType,
-    string calldata versionId,
-    address implementation
-) external onlyOwner;
-```
-(Owner only) Registers an implementation address for an optional module (e.g., Presale) under a specific `moduleType` and `versionId`. Adds the `versionId` to the `moduleVersions` mapping for that type. Emits `ModuleImplementationRegistered`.
+**Parameters:**
+- `daoName`: Name of the DAO (used for Governor)
+- `tokenName`: Name of the governance token (e.g., "My DAO Token")
+- `tokenSymbol`: Token symbol (e.g., "MYD")
+- `totalSupply`: Total token supply in wei (e.g., `1000000 * 10^18` for 1M tokens)
+- `votingDelay`: Delay before voting starts (seconds, e.g., `86400` = 1 day)
+- `votingPeriod`: Duration of voting period (seconds, e.g., `604800` = 1 week)
+
+**Returns:**
+- `token`: Address of the DAOToken proxy
+- `timelock`: Address of the TimelockController (treasury)
+- `governor`: Address of the DAOGovernor proxy
+
+**Process:**
+
+1. **Clone DAOToken** (EIP-1167)
+   - Creates minimal proxy pointing to `tokenImplementation`
+   - Initializes with name, symbol, and total supply
+   - Mints all tokens to the factory temporarily
+
+2. **Deploy TimelockController**
+   - Creates full contract (not a proxy)
+   - Sets 1-day minimum delay
+   - Executors: `address(0)` (anyone can execute after delay)
+   - Admin: factory (temporarily, revoked later)
+
+3. **Clone DAOGovernor** (EIP-1167)
+   - Creates minimal proxy pointing to `governorImplementation`
+   - Initializes with name, token address, and timelock address
+   - Sets initial manager to `msg.sender` (DAO creator)
+   - Configures voting delay, voting period, quorum (1%), and proposal threshold (1%)
+
+4. **Configure Roles**
+   - Grants `PROPOSER_ROLE` to Governor (only Governor can propose timelock actions)
+   - Grants `CANCELLER_ROLE` to Governor
+   - Revokes `ADMIN_ROLE` from factory (Governor becomes sole admin via timelock)
+
+5. **Distribute Tokens**
+   - Transfers 1% to `msg.sender` (creator) - auto-delegated
+   - Transfers 99% to timelock (treasury)
+
+6. **Record & Emit**
+   - Stores DAO info in `daos` array
+   - Emits `DAOCreated` event
 
 ### View Functions
-*   `getCoreImplementation(string versionId)`: Returns the registered core implementation addresses for a given version.
-*   `getModuleImplementation(IDAOModule.ModuleType moduleType, string versionId)`: Returns the registered implementation address for a given module type and version (must be the latest active version for that module type).
-*   `getLatestVersion()`: Returns the latest registered `versionId` for core implementations.
-*   `getAvailableVersions()`: Returns an array of all registered `versionId`s for core implementations.
-*   `getModuleVersions(IDAOModule.ModuleType moduleType)`: Returns an array of registered `versionId`s for a specific module type.
-*   `getLatestModuleVersion(IDAOModule.ModuleType moduleType)`: Returns the latest registered `versionId` for a specific module type.
-*   `FACTORY_VERSION()` / `getFactoryVersion()`: Returns the hardcoded version string of the `DAOFactory` contract itself.
+
+#### `getDAOCount`
+```solidity
+function getDAOCount() external view returns (uint256);
+```
+Returns the total number of DAOs created by this factory.
+
+#### `getDAOByIndex`
+```solidity
+function getDAOByIndex(uint256 index) external view returns (DAOInfo memory);
+```
+Returns information about a specific DAO by its index.
+
+**Returns:** `DAOInfo` struct containing:
+- `name`: DAO name
+- `token`: Token address
+- `governor`: Governor address
+- `timelock`: Timelock address
+- `creator`: Address that created the DAO
+- `createdAt`: Timestamp of creation
+
+#### `getImplementations`
+```solidity
+function getImplementations() external view returns (
+    address tokenImpl,
+    address governorImpl
+);
+```
+Returns the addresses of the implementation contracts used for cloning.
 
 ## Events
 
-*   `DAOCreated(address indexed daoAddress, address indexed tokenAddress, address indexed treasuryAddress, address stakingAddress, string name, string versionId)`: Emitted when a new DAO is successfully deployed.
-*   `CoreImplementationRegistered(string versionId, address daoImpl)`: Emitted when new core implementations are registered.
-*   `ModuleImplementationRegistered(IDAOModule.ModuleType indexed moduleType, string versionId, address implementation, string moduleTypeName)`: Emitted when a new module implementation is registered.
+### `DAOCreated`
 
-## Upgradeability
+```solidity
+event DAOCreated(
+    address indexed creator,
+    address indexed token,
+    address indexed governor,
+    address timelock,
+    string name,
+    uint256 totalSupply
+);
+```
 
-The `DAOFactory` itself is upgradeable via the UUPS pattern. The `_authorizeUpgrade` function restricts upgrades to the `owner()`.
+Emitted when a new DAO is successfully created.
+
+## Token Distribution
+
+When a DAO is created, tokens are distributed as follows:
+
+| Recipient | Percentage | Purpose |
+|-----------|-----------|---------|
+| Creator (`msg.sender`) | 1% | Bootstrap governance - enables meeting quorum and creating initial proposals |
+| Treasury (TimelockController) | 99% | Secure storage - distributed through governance proposals |
+
+The 1% allocation is carefully chosen because:
+- OpenZeppelin's `GovernorVotesQuorumFraction` requires minimum 1% quorum
+- Creator needs exactly 1% to meet quorum and pass initial proposals
+- After initial setup, creator can propose token distribution to other members
+
+## Auto-Delegation
+
+DAOToken implements auto-delegation, which means:
+- When an address receives tokens **for the first time**, they automatically delegate to themselves
+- Voting power is immediately active - no manual `delegate()` call needed
+- This applies to the creator and all future token recipients
+
+## Manager Role
+
+The DAOGovernor contract includes a special `manager` address:
+- **Initial Value**: Set to the DAO creator (`msg.sender`)
+- **Purpose**: On-chain authorization for off-chain operations
+- **How to Change**: Only through governance proposals (timelock-protected)
+- **Use Case**: Integration with DAO management platforms like [OpenBook](https://openbook.so)
+
+Backend systems can query the manager address:
+```solidity
+address currentManager = governor.manager();
+```
+
+And verify authorization:
+```javascript
+if (requestingWallet !== currentManager) {
+    throw new Error("Not authorized");
+}
+```
+
+## Gas Optimization
+
+The Clones pattern provides significant gas savings:
+
+| Component | Traditional Deployment | With Clones | Savings |
+|-----------|----------------------|-------------|---------|
+| DAOToken | ~2.5M gas | ~150K gas | **94%** |
+| DAOGovernor | ~4M gas | ~200K gas | **95%** |
+| **Total DAO** | **~8M gas** | **~2.5M gas** | **69%** |
+
+## Example Usage
+
+```javascript
+import { ethers } from 'ethers';
+
+// Connect to factory
+const factory = await ethers.getContractAt(
+    "DAOFactory",
+    "0xd141662F4b788F28B2a0769a6d3f243D046B571f" // Base mainnet
+);
+
+// Create a DAO
+const tx = await factory.createDAO(
+    "My Community DAO",                    // daoName
+    "My Community Token",                  // tokenName
+    "MCT",                                 // tokenSymbol
+    ethers.parseEther("1000000"),          // 1M tokens
+    86400,                                 // 1 day voting delay
+    604800                                 // 1 week voting period
+);
+
+const receipt = await tx.wait();
+
+// Parse the DAOCreated event
+const event = receipt.logs.find(
+    log => log.fragment?.name === 'DAOCreated'
+);
+
+console.log("Token:", event.args.token);
+console.log("Governor:", event.args.governor);
+console.log("Timelock:", event.args.timelock);
+```
+
+## Security Considerations
+
+1. **Immutable Proxies**: The clones are not upgradeable. Once deployed, they always point to the same implementation.
+
+2. **Implementation Protection**: Implementation contracts call `_disableInitializers()` in their constructor, preventing anyone from initializing them directly.
+
+3. **Role Configuration**: The factory carefully configures timelock roles and revokes its own admin access, ensuring only the Governor can control the timelock.
+
+4. **Deterministic Addresses**: Using CREATE2 for factory deployment enables verification of factory authenticity across chains.
+
+## Deployed Addresses
+
+See the [Deployed Contracts](/deployed-contracts) page for factory addresses on all supported networks.
+
+## Source Code
+
+View the complete source code on GitHub:
+- [DAOFactory.sol](https://github.com/createDAO/v2-core/blob/main/contracts/DAOFactory.sol)
+- [DAOToken.sol](https://github.com/createDAO/v2-core/blob/main/contracts/DAOToken.sol)
+- [DAOGovernor.sol](https://github.com/createDAO/v2-core/blob/main/contracts/DAOGovernor.sol)

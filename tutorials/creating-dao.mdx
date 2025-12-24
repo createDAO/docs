@@ -1,130 +1,292 @@
 ---
 title: 'Creating a DAO'
-description: 'Step-by-step tutorial for creating a DAO using CreateDAO'
+description: 'Step-by-step tutorial for creating a DAO using CreateDAO v2'
 ---
 
 # Creating a DAO
 
-This tutorial will guide you through the process of creating a Decentralized Autonomous Organization (DAO) using CreateDAO. By the end, you'll have deployed a fully functional DAO with governance capabilities, a token, treasury, and staking mechanism.
+This tutorial will guide you through the process of creating a Decentralized Autonomous Organization (DAO) using CreateDAO v2. By the end, you'll have deployed a fully functional DAO with:
+- **Governance token** with automatic voting power
+- **Governor contract** for proposals and voting
+- **Secure treasury** with timelock protection
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
 - A Web3 wallet (like MetaMask) installed and set up
-- Some cryptocurrency (ETH, MATIC, etc.) in your wallet for gas fees
-- Basic understanding of blockchain concepts
+- Cryptocurrency in your wallet for gas fees (ETH on Base/Sepolia)
+- Basic understanding of blockchain and DAO concepts
 
 ## Step 1: Connect Your Wallet
 
 1. Go to [CreateDAO.org](https://createdao.org)
-2. Click on the "Create DAO" button in the navigation bar
-3. Click "Connect Wallet" in the top-right corner
-4. Select your wallet provider (MetaMask, WalletConnect, etc.)
+2. Click on the **"Create DAO"** button
+3. Click **"Connect Wallet"** in the top-right corner
+4. Select your wallet provider (MetaMask, WalletConnect, Coinbase Wallet, etc.)
 5. Approve the connection request in your wallet
 
-![Connect Wallet](/images/tutorials/connect-wallet.png)
+<Note>
+Your wallet address will become the initial **Manager** of the DAO and receive 1% of the tokens to bootstrap governance.
+</Note>
 
 ## Step 2: Select a Network
 
-1. Choose the blockchain network where you want to deploy your DAO
+1. Choose the blockchain network where you want to deploy your DAO:
+   - **Base** (Mainnet) - For production DAOs
+   - **Sepolia** (Testnet) - For testing (recommended first)
+
 2. If you're not already connected to that network, your wallet will prompt you to switch
 3. Confirm the network switch in your wallet
 
-<Note>
-For testing purposes, we recommend using a testnet like Goerli (Ethereum) or Mumbai (Polygon) first to avoid spending real cryptocurrency.
-</Note>
-
-![Select Network](/images/tutorials/select-network.png)
+<Tip>
+**Testing First?** We strongly recommend deploying on Sepolia testnet first to familiarize yourself with the process. You can get free Sepolia ETH from faucets like [sepoliafaucet.com](https://sepoliafaucet.com).
+</Tip>
 
 ## Step 3: Enter DAO Details
 
 Fill in the following information for your DAO:
 
-1. **DAO Name**: Enter a name for your organization (e.g., "GreenEarth DAO")
-2. **Token Name**: Enter a name for your governance token (e.g., "GreenEarth Token")
-3. **Token Symbol**: Enter a short symbol for your token (max 6 characters, e.g., "GET")
-4. **Total Supply**: Enter the total number of tokens to create (e.g., "1000000")
+### Basic Information
 
-<Note>
-The total supply represents the maximum number of tokens that will ever exist. You'll receive 1 token in your wallet, and the rest will be stored in the DAO's treasury.
-</Note>
+**DAO Name**
+- The name of your organization (e.g., "Community Coffee DAO")
+- This will be displayed in governance interfaces
 
-![Enter DAO Details](/images/tutorials/enter-dao-details.png)
+**Token Name**
+- The full name of your governance token (e.g., "Community Coffee Token")
+
+**Token Symbol**
+- A short symbol for your token, 2-6 characters (e.g., "CCT")
+- Will be displayed in wallets and explorers
+
+**Total Supply**
+- The total number of tokens to create (e.g., "1000000" for 1 million tokens)
+- Entered as whole numbers - the system automatically handles the 18 decimals
+- **Distribution**: 1% goes to you (the creator), 99% to the DAO treasury
+
+<Warning>
+**Total supply is permanent!** Once created, the total supply cannot be increased. Choose carefully based on your community size and tokenomics needs.
+</Warning>
+
+### Governance Parameters
+
+**Voting Delay**
+- Time before voting starts after a proposal is created
+- Recommended: **1 day** (86400 seconds)
+- Gives members time to review proposals before voting begins
+
+**Voting Period**
+- How long members can vote on a proposal
+- Recommended: **1 week** (604800 seconds)
+- Balances urgency with member participation
+
+<Info>
+All governance parameters can be changed later through governance proposals if your DAO decides to adjust them.
+</Info>
 
 ## Step 4: Review and Deploy
 
-1. Review all the information you've entered
-2. Click the "Create DAO" button
-3. Your wallet will prompt you to confirm the transaction
-4. Review the gas fee and confirm the transaction
+1. **Review** all the information you've entered
+2. **Estimated costs** will be displayed:
+   - Gas fee: ~0.002-0.005 ETH on Base
+   - No protocol fees - CreateDAO is free to use!
 
-<Warning>
-Creating a DAO requires deploying multiple smart contracts, which can be gas-intensive. Make sure you have enough cryptocurrency in your wallet to cover the gas fees.
-</Warning>
+3. Click the **"Create DAO"** button
+4. Your wallet will prompt you to confirm the transaction
+5. **Review the gas fee** and confirm
 
-![Review and Deploy](/images/tutorials/review-deploy.png)
+<Note>
+Creating a DAO deploys three smart contracts (Token, Governor, Treasury) in a single transaction using gas-efficient proxies.
+</Note>
 
 ## Step 5: Wait for Deployment
 
-1. The deployment process will begin, and you'll see a progress indicator
-2. This process typically takes 1-3 minutes, depending on network congestion
-3. Do not close the browser window during deployment
-
-![Deployment Progress](/images/tutorials/deployment-progress.png)
+1. The deployment process will begin
+2. You'll see a progress indicator
+3. Typical deployment time: **30-90 seconds** depending on network conditions
+4. **Do not close** the browser window during deployment
 
 ## Step 6: Save Your DAO Information
 
 Once deployment is complete, you'll see a success message with important information:
 
-1. **DAO Address**: The address of your main DAO contract
-2. **Token Address**: The address of your governance token
-3. **Treasury Address**: The address of your DAO's treasury
-4. **Staking Address**: The address of your staking contract
+### Contract Addresses
+
+- **Token Address**: Your governance token (ERC20)
+- **Governor Address**: Your governance contract
+- **Timelock Address**: Your treasury contract
+
+### What to Save
+
+1. **Copy all three addresses** and store them securely
+2. **Bookmark the governance page** for easy access
+3. **Note your token symbol** for finding it in wallets
 
 <Warning>
-Save this information immediately! These addresses are crucial for managing your DAO. Click the "Copy All Details" button and store them in a secure location.
+**Important!** Save these addresses immediately. While they're recorded on the blockchain, having them handy makes managing your DAO much easier.
 </Warning>
-
-![Deployment Success](/images/tutorials/deployment-success.png)
 
 ## Step 7: Verify Your DAO
 
-1. Your wallet should now have 1 token from your newly created DAO
-2. The remaining tokens are stored in the DAO's treasury
-3. You can verify this by checking your wallet balance and the treasury contract on a block explorer
+### Check Your Wallet
+
+1. Open your wallet (MetaMask, etc.)
+2. You should see **1% of your total supply** in your wallet
+3. Your tokens are **automatically delegated** - ready to vote immediately!
+
+### View on Block Explorer
+
+1. Click the explorer links to view your contracts
+2. Verify the token name and symbol are correct
+3. Check that 99% of tokens are in the Timelock (treasury)
+
+## Understanding Your DAO
+
+### Token Distribution
+
+- **You (Creator)**: 1% of total supply
+  - Enables you to meet quorum (1% minimum)
+  - Allows you to create and pass initial proposals
+  - Already delegated - voting power is active
+
+- **Treasury (Timelock)**: 99% of total supply
+  - Held securely in the TimelockController
+  - Can only be moved through governance proposals
+  - 1-day execution delay for security
+
+### Governance Process
+
+1. **Create Proposal**: Requires 1% of tokens (you qualify!)
+2. **Voting Delay**: Proposal enters voting after your set delay
+3. **Active Voting**: Members vote FOR, AGAINST, or ABSTAIN
+4. **Quorum Check**: Needs 1% participation minimum
+5. **Timelock Queue**: Passed proposals wait 1 day
+6. **Execution**: Anyone can execute after delay
+
+### Manager Role
+
+- **You are the Manager**: Your wallet address is set as the initial manager
+- **Purpose**: On-chain authorization for DAO management platforms
+- **Changing Manager**: Only through governance proposals
+- **Use Case**: Integration with tools like [OpenBook](https://openbook.so) for transparent business operations
 
 ## Next Steps
 
-Congratulations! You've successfully created a DAO using CreateDAO. Here's what you can do next:
+### Distribute Tokens to Members
 
-1. **Manage Your DAO**: Visit [dao.cafe](https://dao.cafe) to manage your DAO, create proposals, and vote
-2. **Stake Tokens**: Stake your tokens to gain voting power
-3. **Create a Proposal**: Propose actions like transferring funds or upgrading contracts
-4. **Invite Members**: Share your DAO address with others to grow your community
+Create your first proposal to distribute tokens:
 
-For more detailed information on managing your DAO, check out the [Managing a DAO](/tutorials/managing-dao) tutorial.
+```javascript
+// Example: Transfer 10,000 tokens from treasury
+const token = await ethers.getContractAt("DAOToken", TOKEN_ADDRESS);
+const governor = await ethers.getContractAt("DAOGovernor", GOVERNOR_ADDRESS);
+
+// Encode the transfer call
+const transferCalldata = token.interface.encodeFunctionData('transfer', [
+  recipientAddress,
+  ethers.parseEther("10000")
+]);
+
+// Create proposal
+await governor.propose(
+  [TOKEN_ADDRESS],           // targets
+  [0],                       // values (no ETH)
+  [transferCalldata],        // calldatas
+  "Proposal #1: Distribute tokens to founding team members"
+);
+```
+
+### Manage Your DAO
+
+Visit these platforms to manage your DAO:
+
+- **[Tally](https://tally.xyz)**: Create proposals, vote, view history
+- **[OpenBook](https://openbook.so)**: Transparent business management (if applicable)
+- **Block Explorer**: View all on-chain activity
+
+### Create Proposals
+
+You can propose any on-chain action:
+- Transfer tokens from treasury
+- Change governance parameters
+- Update the Manager address
+- Execute smart contract calls
+- Anything the DAO's treasury can do!
 
 ## Troubleshooting
 
 ### Transaction Failed
 
-If your transaction fails during deployment:
+**Insufficient Gas**
+- Ensure you have enough ETH for gas fees
+- Try increasing gas limit or gas price
 
-1. Check that you have enough cryptocurrency for gas fees
-2. Ensure you're connected to the correct network
-3. Try again with a higher gas limit
-4. If problems persist, check the network status for congestion issues
+**Network Congestion**
+- Wait a few minutes and try again
+- Check network status on the block explorer
 
-### DAO Not Appearing
+### Tokens Not Appearing in Wallet
 
-If your DAO doesn't appear after successful deployment:
+**Manual Token Import**
+1. Open your wallet
+2. Click "Import Token" or "Add Token"
+3. Select "Custom Token"
+4. Paste your **Token Address**
+5. Token name and symbol should auto-fill
 
-1. Verify the transaction on the block explorer
-2. Check that you're connected to the correct network
-3. Try refreshing the page or clearing your browser cache
-4. Visit [dao.cafe](https://dao.cafe) and connect your wallet to see if your DAO appears there
+### Can't Create Proposals
 
-### Need Help?
+**Need 1% of Supply**
+- Ensure you have at least 1% of tokens
+- Check that your tokens are delegated (should be automatic)
+- Try refreshing the governance interface
 
-If you encounter any issues not covered here, join our [Discord community](https://discord.gg/createdao) for support.
+### Voting Power Shows Zero
+
+**Delegation Issue**
+- CreateDAO v2 has auto-delegation, but if needed:
+- Call `token.delegate(yourAddress)` to activate voting power
+- Voting power updates at the next block
+
+## Security Best Practices
+
+1. **Verify Contract Addresses**: Always check addresses on the official [Deployed Contracts](/deployed-contracts) page
+
+2. **Test First**: Deploy on Sepolia testnet before mainnet
+
+3. **Secure Your Wallet**: Use hardware wallets for high-value DAOs
+
+4. **Review Proposals**: Always review proposal calldata before voting
+
+5. **Timelock Protection**: The 1-day delay protects against harmful proposals
+
+## Need Help?
+
+If you encounter any issues:
+
+- **Discord**: Join our [Discord community](https://discord.gg/HnRmtP2fph)
+- **Telegram**: Ask in [Telegram group](https://t.me/createdao_org)
+- **GitHub**: Report issues on [GitHub](https://github.com/createDAO/v2-core)
+- **Twitter**: Follow [@createdao](https://x.com/createdao)
+
+## Learn More
+
+<CardGroup cols={2}>
+  <Card title="DAOFactory Reference" icon="code" href="/contracts/dao-factory">
+    Technical details of the factory contract
+  </Card>
+  <Card title="Deployed Contracts" icon="map-pin" href="/deployed-contracts">
+    Contract addresses on all networks
+  </Card>
+  <Card title="OpenZeppelin Governor" icon="book" href="https://docs.openzeppelin.com/contracts/5.x/governance">
+    Learn about the underlying governance system
+  </Card>
+  <Card title="Governance Parameters" icon="sliders" href="/governance/parameters">
+    Understanding voting delay, period, and quorum
+  </Card>
+</CardGroup>
+
+---
+
+**Congratulations!** 🎉 You've successfully created a DAO using CreateDAO v2. Your organization is now ready for decentralized governance!
