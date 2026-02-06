@@ -5,7 +5,7 @@ description: 'Addresses of the CreateDAO v2 contracts on supported networks.'
 
 # Deployed Contracts
 
-This page lists the official addresses for CreateDAO v2 contracts on supported blockchain networks. All contracts use deterministic CREATE2 deployment for consistent addresses across chains.
+This page lists the official addresses for CreateDAO v2 contracts on supported blockchain networks. All contracts use deterministic CREATE2 deployment for consistent addresses across networks.
 
 <Note>
 CreateDAO v2 is a complete rewrite using OpenZeppelin Governor. These addresses are NOT compatible with v1 contracts.
@@ -17,6 +17,7 @@ Each network has:
 1. **DAOFactory** - The main factory contract for creating new DAOs
 2. **DAOToken Implementation** - Shared implementation for all DAO tokens (EIP-1167 clones)
 3. **DAOGovernor Implementation** - Shared implementation for all governors (EIP-1167 clones)
+4. **DAOTimelock Implementation** - Shared implementation for all DAO timelocks (EIP-1167 clones)
 
 When you create a DAO, the factory creates minimal proxies (45 bytes each) that delegate to these implementations.
 
@@ -24,21 +25,22 @@ When you create a DAO, the factory creates minimal proxies (45 bytes each) that 
 
 ## Mainnet Deployments
 
-### Base (Mainnet)
+### Ethereum (Mainnet)
 
 | Contract | Address | Explorer Link |
 |----------|---------|---------------|
-| **DAOFactory** | `0xd141662F4b788F28B2a0769a6d3f243D046B571f` | [View on Basescan](https://basescan.org/address/0xd141662F4b788F28B2a0769a6d3f243D046B571f) |
-| DAOToken Implementation | `0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db` | [View on Basescan](https://basescan.org/address/0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db) |
-| DAOGovernor Implementation | `0x2F81fb483fD1B578d16d41e92c62A365b4b04081` | [View on Basescan](https://basescan.org/address/0x2F81fb483fD1B578d16d41e92c62A365b4b04081) |
+| **DAOFactory** | `0x742236f55a5e43B1AAec404527cE6986E02cD700` | [View on Etherscan](https://etherscan.io/address/0x742236f55a5e43B1AAec404527cE6986E02cD700) |
+| DAOToken Implementation | `0x4516F43c475A4c469367A1AfD2998FC30CF8C3B6` | [View on Etherscan](https://etherscan.io/address/0x4516F43c475A4c469367A1AfD2998FC30CF8C3B6) |
+| DAOGovernor Implementation | `0xC6Ee7F3D2D3BbA67d0a2a6562d5b6A416e390141` | [View on Etherscan](https://etherscan.io/address/0xC6Ee7F3D2D3BbA67d0a2a6562d5b6A416e390141) |
+| DAOTimelock Implementation | `0xf8354d8F218cE905ddf3a24c88F3358ece319373` | [View on Etherscan](https://etherscan.io/address/0xf8354d8F218cE905ddf3a24c88F3358ece319373) |
 
-**Example DAO on Base:**
+**Example DAO on Ethereum:**
 
 | Contract | Address | Explorer Link |
 |----------|---------|---------------|
-| DAOToken (Proxy) | `0x154EB315Ab729E998847aA55F8b5bC73cf8A61d9` | [View on Basescan](https://basescan.org/address/0x154EB315Ab729E998847aA55F8b5bC73cf8A61d9) |
-| DAOGovernor (Proxy) | `0x4013cdFEB389A4213e8565258D2ac3604bFbB1B3` | [View on Basescan](https://basescan.org/address/0x4013cdFEB389A4213e8565258D2ac3604bFbB1B3) |
-| TimelockController (Treasury) | `0xb8CE0BbD2c5B589Da458677392B255E761E1A15F` | [View on Basescan](https://basescan.org/address/0xb8CE0BbD2c5B589Da458677392B255E761E1A15F) |
+| DAOToken (Proxy) | `0xE01e09c9b7CbaDb352807A2E668b557C757C616c` | [View on Etherscan](https://etherscan.io/address/0xE01e09c9b7CbaDb352807A2E668b557C757C616c) |
+| DAOGovernor (Proxy) | `0x4Df4c7d787d2768CB93b7920e70813F7500bf09B` | [View on Etherscan](https://etherscan.io/address/0x4Df4c7d787d2768CB93b7920e70813F7500bf09B) |
+| TimelockController (Treasury) | `0x8cA6797039A1A856915e50C8Cf15e795d84Aa52b` | [View on Etherscan](https://etherscan.io/address/0x8cA6797039A1A856915e50C8Cf15e795d84Aa52b) |
 
 ---
 
@@ -48,17 +50,18 @@ When you create a DAO, the factory creates minimal proxies (45 bytes each) that 
 
 | Contract | Address | Explorer Link |
 |----------|---------|---------------|
-| **DAOFactory** | `0xd141662F4b788F28B2a0769a6d3f243D046B571f` | [View on Etherscan](https://sepolia.etherscan.io/address/0xd141662F4b788F28B2a0769a6d3f243D046B571f) |
-| DAOToken Implementation | `0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db` | [View on Etherscan](https://sepolia.etherscan.io/address/0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db) |
-| DAOGovernor Implementation | `0x2F81fb483fD1B578d16d41e92c62A365b4b04081` | [View on Etherscan](https://sepolia.etherscan.io/address/0x2F81fb483fD1B578d16d41e92c62A365b4b04081) |
+| **DAOFactory** | `0xDcB4dB872798487b737D2dBf6bEfE5187299c3bc` | [View on Etherscan](https://sepolia.etherscan.io/address/0xDcB4dB872798487b737D2dBf6bEfE5187299c3bc) |
+| DAOToken Implementation | `0x4516F43c475A4c469367A1AfD2998FC30CF8C3B6` | [View on Etherscan](https://sepolia.etherscan.io/address/0x4516F43c475A4c469367A1AfD2998FC30CF8C3B6) |
+| DAOGovernor Implementation | `0xC6Ee7F3D2D3BbA67d0a2a6562d5b6A416e390141` | [View on Etherscan](https://sepolia.etherscan.io/address/0xC6Ee7F3D2D3BbA67d0a2a6562d5b6A416e390141) |
+| DAOTimelock Implementation | `0xf8354d8F218cE905ddf3a24c88F3358ece319373` | [View on Etherscan](https://sepolia.etherscan.io/address/0xf8354d8F218cE905ddf3a24c88F3358ece319373) |
 
 **Example DAO on Sepolia:**
 
 | Contract | Address | Explorer Link |
 |----------|---------|---------------|
-| DAOToken (Proxy) | `0x2F524705E04aFa3b450a8C60f04975630B6deff4` | [View on Etherscan](https://sepolia.etherscan.io/address/0x2F524705E04aFa3b450a8C60f04975630B6deff4) |
-| DAOGovernor (Proxy) | `0x707e6c8d2C52C16eA4F93e41932b11e34814B4B0` | [View on Etherscan](https://sepolia.etherscan.io/address/0x707e6c8d2C52C16eA4F93e41932b11e34814B4B0) |
-| TimelockController (Treasury) | `0x2cA78756658e85DC5F175363553225881e8537FC` | [View on Etherscan](https://sepolia.etherscan.io/address/0x2cA78756658e85DC5F175363553225881e8537FC) |
+| DAOToken (Proxy) | `0x8083752f1F662D1e7C103D2Db9F457167edc6096` | [View on Etherscan](https://sepolia.etherscan.io/address/0x8083752f1F662D1e7C103D2Db9F457167edc6096) |
+| DAOGovernor (Proxy) | `0x4D0BD11860bBa91B5872d6e9fE1E7724c7A78E44` | [View on Etherscan](https://sepolia.etherscan.io/address/0x4D0BD11860bBa91B5872d6e9fE1E7724c7A78E44) |
+| TimelockController (Treasury) | `0x7B5BcA34de21C0B3400854095ea13107322622DC` | [View on Etherscan](https://sepolia.etherscan.io/address/0x7B5BcA34de21C0B3400854095ea13107322622DC) |
 
 ---
 
@@ -69,12 +72,10 @@ All CreateDAO v2 contracts use CREATE2 for deterministic deployment, ensuring co
 **CREATE2 Configuration:**
 ```
 CREATE2 Deployer: 0x4e59b44847b379578588920cA78FbF26c0B4956C
-Salt: CreateDAO_Production_v2_0_0
-Salt Hash: 0x86e878d0db536a6fd426beb56994c299552f4885e0000a9bb0b08f46860e1fdb
-Init Code Hash: 0xb88b2130abbf8e7570a958fcdc98f4143b26f2bd1d7ad95c56b62f31350f8485
+Salt Label: production_1
 ```
 
-This means the DAOFactory address is **identical across all supported chains** when deployed with the same salt.
+This means the DAOFactory address is **identical across all supported networks** when deployed with the same salt.
 
 ---
 
@@ -82,9 +83,9 @@ This means the DAOFactory address is **identical across all supported chains** w
 
 ### Method 1: Check Factory Address
 
-The official DAOFactory address is:
+The official Ethereum DAOFactory address is:
 ```
-0xd141662F4b788F28B2a0769a6d3f243D046B571f
+0x742236f55a5e43B1AAec404527cE6986E02cD700
 ```
 
 Always verify you're interacting with this address on the correct network.
@@ -98,18 +99,22 @@ import { ethers } from 'ethers';
 
 const factory = await ethers.getContractAt(
     "DAOFactory",
-    "0xd141662F4b788F28B2a0769a6d3f243D046B571f"
+    "0x742236f55a5e43B1AAec404527cE6986E02cD700"
 );
 
-const [tokenImpl, governorImpl] = await factory.getImplementations();
+const tokenImpl = await factory.tokenImplementation();
+const governorImpl = await factory.governorImplementation();
+const timelockImpl = await factory.timelockImplementation();
 
 console.log("Token Implementation:", tokenImpl);
 console.log("Governor Implementation:", governorImpl);
+console.log("Timelock Implementation:", timelockImpl);
 ```
 
 Expected results:
-- Token: `0xfAAB628eddeEC6093CCdB5288b865a8073ab55Db`
-- Governor: `0x2F81fb483fD1B578d16d41e92c62A365b4b04081`
+- Token: `0x4516F43c475A4c469367A1AfD2998FC30CF8C3B6`
+- Governor: `0xC6Ee7F3D2D3BbA67d0a2a6562d5b6A416e390141`
+- Timelock: `0xf8354d8F218cE905ddf3a24c88F3358ece319373`
 
 ### Method 3: Verify Source Code
 
@@ -139,9 +144,10 @@ When you create a DAO using the factory, you get three contracts:
 - **Functionality**: Governance with OpenZeppelin extensions + Manager role
 - **Your Instance**: Each DAO gets its own isolated proxy
 
-### 3. TimelockController (Full Contract)
+### 3. DAOTimelock (EIP-1167 Proxy)
 
-- **Type**: Full contract deployment (not a proxy)
+- **Type**: Minimal proxy (45 bytes)
+- **Delegates to**: DAOTimelock Implementation
 - **Functionality**: Treasury + execution delay
 - **Holds**: 99% of your DAO's token supply
 
@@ -153,14 +159,14 @@ When you create a DAO using the factory, you get three contracts:
 
 ```javascript
 import { createPublicClient, http } from 'viem';
-import { base } from 'viem/chains';
+import { mainnet } from 'viem/chains';
 
 const client = createPublicClient({
-  chain: base,
+  chain: mainnet,
   transport: http()
 });
 
-const FACTORY_ADDRESS = '0xd141662F4b788F28B2a0769a6d3f243D046B571f';
+const FACTORY_ADDRESS = '0x742236f55a5e43B1AAec404527cE6986E02cD700';
 
 // Read DAO count
 const daoCount = await client.readContract({
@@ -187,13 +193,12 @@ console.log("Current Manager:", managerAddress);
 
 ## Network Information
 
-### Base (Mainnet)
+### Ethereum (Mainnet)
 
-- **Chain ID**: 8453
-- **RPC**: `https://mainnet.base.org`
-- **Explorer**: https://basescan.org
+- **Chain ID**: 1
+- **Explorer**: https://etherscan.io
 - **Currency**: ETH
-- **Type**: L2 (Optimistic Rollup)
+- **Type**: L1
 
 ### Sepolia (Testnet)
 

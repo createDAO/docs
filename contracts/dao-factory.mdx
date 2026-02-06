@@ -9,7 +9,7 @@ The `DAOFactory` is the central deployment contract for CreateDAO v2. It deploys
 
 ## Overview
 
-The factory contains implementation contracts for DAOToken and DAOGovernor, deployed once in the constructor. When creating a new DAO, it clones these implementations and deploys a fresh TimelockController, configuring all three contracts to work together as a complete governance system.
+The factory contains implementation contracts for **DAOToken**, **DAOGovernor**, and **DAOTimelock**, deployed once. When creating a new DAO, it clones these implementations (EIP-1167) and initializes them so the three contracts work together as a complete governance system.
 
 ## Key Concepts
 
@@ -45,13 +45,13 @@ flowchart TD
     subgraph CreateDAO["createDAO()"]
         direction TB
         CloneToken[Clone DAOToken → 45 bytes proxy]
-        DeployTimelock[Deploy TimelockController → full contract]
+        CloneTimelock[Clone DAOTimelock → 45 bytes proxy]
         CloneGovernor[Clone DAOGovernor → 45 bytes proxy]
         ConfigRoles[Configure roles and permissions]
         DistributeTokens[Distribute tokens: 1% creator, 99% treasury]
         
-        CloneToken --> DeployTimelock
-        DeployTimelock --> CloneGovernor
+        CloneToken --> CloneTimelock
+        CloneTimelock --> CloneGovernor
         CloneGovernor --> ConfigRoles
         ConfigRoles --> DistributeTokens
     end
@@ -91,7 +91,7 @@ Deploys a complete DAO system in a single transaction.
 
 **Returns:**
 - `token`: Address of the DAOToken proxy
-- `timelock`: Address of the TimelockController (treasury)
+- `timelock`: Address of the DAOTimelock proxy (treasury)
 - `governor`: Address of the DAOGovernor proxy
 
 **Process:**
@@ -101,9 +101,9 @@ Deploys a complete DAO system in a single transaction.
    - Initializes with name, symbol, and total supply
    - Mints all tokens to the factory temporarily
 
-2. **Deploy TimelockController**
-   - Creates full contract (not a proxy)
-   - Sets 1-day minimum delay
+2. **Clone DAOTimelock** (EIP-1167)
+   - Creates minimal proxy pointing to `timelockImplementation`
+   - Initializes the timelock delay and admin
    - Executors: `address(0)` (anyone can execute after delay)
    - Admin: factory (temporarily, revoked later)
 
@@ -157,6 +157,10 @@ function getImplementations() external view returns (
 ```
 Returns the addresses of the implementation contracts used for cloning.
 
+:::note
+The current factory version also exposes `timelockImplementation()`.
+:::
+
 ## Events
 
 ### `DAOCreated`
@@ -181,7 +185,7 @@ When a DAO is created, tokens are distributed as follows:
 | Recipient | Percentage | Purpose |
 |-----------|-----------|---------|
 | Creator (`msg.sender`) | 1% | Bootstrap governance - enables meeting quorum and creating initial proposals |
-| Treasury (TimelockController) | 99% | Secure storage - distributed through governance proposals |
+| Treasury (DAOTimelock) | 99% | Secure storage - distributed through governance proposals |
 
 The 1% allocation is carefully chosen because:
 - OpenZeppelin's `GovernorVotesQuorumFraction` requires minimum 1% quorum
@@ -233,7 +237,7 @@ import { ethers } from 'ethers';
 // Connect to factory
 const factory = await ethers.getContractAt(
     "DAOFactory",
-    "0xd141662F4b788F28B2a0769a6d3f243D046B571f" // Base mainnet
+    "0x742236f55a5e43B1AAec404527cE6986E02cD700" // Ethereum mainnet
 );
 
 // Create a DAO
